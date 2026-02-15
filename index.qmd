@@ -1,0 +1,33 @@
+---
+title: "Jackie's Website"
+---
+
+Hello I'm Xiyao (Jackie). This is my second semester in my business analytics graduate program.
+
+```{r}
+#| include: false
+1+1
+```
+--------------
+Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+if(!require("leaflet")){
+    options(repos=c(CRAN="https://cloud.r-project.org"))
+    install.packages("leaflet")
+    stopifnot(require("leaflet"))
+}
+
+tonchin_longitude <- -73.98446
+tonchin_latitude  <- +40.75037
+
+leaflet() |>
+  addTiles() |>
+  setView(tonchin_longitude, tonchin_latitude, zoom=17) |>
+  addPopups(tonchin_longitude, tonchin_latitude, 
+            "My favorite ramen spot</b>!")
+```

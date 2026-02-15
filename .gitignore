@@ -1,0 +1,31 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+**/.quarto/*
+.Rproj.user
+data/**
+**/*_cache/*
+*_files/*
+**/*_freeze/*
+**/*tsv*
+**/*csv*
+**/*xlsx*
+**/*zip
+**/*pdf
+**/*json
+**/*rds
+.DS_Store
+.Rhistory
+/.quarto/*
+**/gganim*
+
+if(!require("usethis")) install.packages("usethis")
+usethis::git_sitrep()
+
+git config --global user.email "XIYAO.CHEN@baruchmail.cuny.edu"
+git config --global user.name "Jackie Chen"
+
+/.quarto/
+**/*.quarto_ipynb
