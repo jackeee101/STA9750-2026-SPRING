@@ -4,6 +4,8 @@ title: "Jackie's Website"
 
 Hello I'm Xiyao (Jackie). This is my second semester in my business analytics graduate program.
 
+[Connect with me on LinkedIn!](https://www.linkedin.com/in/jackie-chen-6b5023238/)
+
 ```{r}
 #| include: false
 1+1
@@ -30,4 +32,5 @@ leaflet() |>
   setView(tonchin_longitude, tonchin_latitude, zoom=17) |>
   addPopups(tonchin_longitude, tonchin_latitude, 
             "My favorite ramen spot</b>!")
+
 ```
