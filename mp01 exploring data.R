@@ -137,11 +137,6 @@ IPEDS <- IPEDS |>
 
 # Task 3: Identify UC and CAl State Schools
 
-IPEDS |>
-  filter(str_detect(institution_name,"California")) |>
-  distinct(institution_name) |>
-  print(n = 200)
-
 IPEDS <- IPEDS |>
   mutate(is_calpublic = str_detect(institution_name,"University of California") |
            str_detect(institution_name,"California State University"))
@@ -166,6 +161,39 @@ library(gt)
 
 # Task 5 Exploratory Questions
 
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_aian = enrollment_m_aian + enrollment_f_aian)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_asia = enrollment_m_asia + enrollment_f_asia)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_bkaa = enrollment_m_bkaa + enrollment_f_bkaa)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_hisp = enrollment_m_hisp + enrollment_f_hisp)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_nhpi = enrollment_m_nhpi + enrollment_f_nhpi)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_whit = enrollment_m_whit + enrollment_f_whit)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_2mor = enrollment_m_2mor + enrollment_f_2mor)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_unkn = enrollment_m_unkn + enrollment_f_unkn)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_nral = enrollment_m_nral + enrollment_f_nral)
+
+IPEDS <- IPEDS |>
+  mutate(total_enrollment = enrollment_aian + enrollment_asia + enrollment_bkaa + enrollment_hisp + enrollment_nhpi + enrollment_whit + enrollment_2mor + enrollment_unkn + enrollment_nral)
+
+
+
 # 1 How many distinct institutions appear in this data set?
 # Answer: 11243
 
@@ -175,76 +203,47 @@ IPEDS |>
 # 2 How many graduate students were enrolled at Baruch in 2024?
 # Answer: 3585
 
-#shortcut
-IPEDS |>
-  filter(str_detect(institution_name, "Baruch") & 
-  str_detect(level, "graduate") &
-  year == 2024) |>
-  summarize(total_enrollment =
-              sum(unlist(across(contains("enrollment"))),
-                  na.rm = TRUE))
-
-# all rows
-
 IPEDS |>
   filter(str_detect(institution_name, "Baruch") & 
            str_detect(level, "graduate") &
            year == 2024) |>
-  print(n=25, width=Inf)
-  
-print(5+1+443+494+151+246+278+357+2+1+417+407+37+41+325+380)
+  summarize(total_enrollment)
 
 # 3  How many total students were enrolled at Baruch in 2024?
 # Answer: 20081
 
 IPEDS |>
-  distinct(level)
-
-#shortcut
-IPEDS |>
   filter(str_detect(institution_name, "Baruch") &
         !str_detect(level, "first year") &
            year == 2024) |>
-  summarize(total_enrollment =
-              sum(unlist(across(contains("enrollment"))),
-                  na.rm = TRUE))
-  print(n=25, width=Inf)
+  select(total_enrollment)
 
-#all rows  
-IPEDS |>
-    filter(str_detect(institution_name, "Baruch") &
-             !str_detect(level, "first year") &
-             year == 2024) |>
-  print(n=25, width=Inf)
-
-print(5+11+1+17+443+2950+494+2840+151+619+246+841+278+2244+357+2501+2+8+1+8+417+1739+407+1282+37+214+41+191+325+441+380+590)
-
+3585 + 16496
+  
 # 4 Which institution had the highest number of enrolled female students in 2019?
-# Answer: Western Governors University
+# Answer: Western Governors University 62737
 
 IPEDS |>
-    group_by(institution_name) |>
-    summarize(total_enrollment =
-        sum(unlist(across(contains("enrollment_f"))),na.rm = TRUE)) |>
-    slice_max(total_enrollment,n=5)
+    filter(year == 2019) |>
+    mutate(total_f_enrollment = enrollment_f_aian + enrollment_f_asia+ enrollment_f_bkaa + enrollment_f_hisp + enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn + enrollment_f_nral) |>
+    select(institution_name, total_f_enrollment) |>
+    slice_max(total_f_enrollment, n = 5)
+
 
 # 5 Which institution with over 1000 total students admitted the highest proportion of Native Hawaiian or Pacific Islander (nhpi) first-year undergraduates in 2024?
 # Report at least both the institution and the fraction of relevant students.
-# Answer: Northeast Technology Center, 20,8%
+# Answer: Northeast Technology Center, 20.8%
 
 IPEDS |>
   filter(str_detect(level, "first year") &
            year == 2024) |>
   group_by(institution_name) |>
   summarize(
-    total_enrollment =
-      sum(across(contains("enrollment")), na.rm = TRUE),
-    
-    total_aian_enrollment =
-      sum(across(contains("aian")), na.rm = TRUE)
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    enrollment_aian = sum(enrollment_aian, na.rm = TRUE)
   ) |>
   mutate(
-    pct_aian = total_aian_enrollment / total_enrollment
+    pct_aian = enrollment_aian / total_enrollment
   )|>
   filter(total_enrollment > 1000) |>
   slice_max(pct_aian,n=5)
@@ -253,11 +252,6 @@ IPEDS |>
 
 # 1 Which 5 states had the highest number of graduate students across all institutions located in that state?
 # Answer: CA, TX, NY, FL, IL
-
-IPEDS <- IPEDS |>
-  mutate(
-    total_enrollment = rowSums(across(contains("enrollment")), na.rm = TRUE)
-  )
 
 IPEDS |>
   group_by(state) |>
@@ -269,17 +263,14 @@ IPEDS |>
 # 2 In 2024, how many first year undergraduate students were enrolled at CUNY colleges and which colleges did they attend? Report both absolute enrollment numbers and percent of total first-year undergraduates?
 # 
 
-
-
 IPEDS |>
   filter(year == 2024 &
         is_cuny == TRUE)|>
   group_by(institution_name) |>
-  summarize(first_year_enrollment = sum(
-    unlist(across(contains("enrollment")))[str_detect(level, "first year")],
+  summarize(first_year_enrollment = sum(total_enrollment[str_detect(level, "first year")],
     na.rm = TRUE
   ),
-  total_enrollment = sum(unlist(across(contains("enrollment"))), na.rm = TRUE),
+  total_enrollment = sum(total_enrollment), na.rm = TRUE)
   ) |>
   mutate(
     percent_first_year = first_year_enrollment / (total_enrollment - first_year_enrollment) * 100
@@ -288,22 +279,20 @@ IPEDS |>
     
 # 3 How has Baruch’s total undergraduate enrollment changed over the study period? Report both enrollment numbers and percent change year-over-year.
 
-IPEDS <- IPEDS |>
-  mutate(
-    total_enrollment = rowSums(across(contains("enrollment")), na.rm = TRUE)
-  )
-
-IPEDS |>
-  filter(str_detect(institution_name, "Baruch")) |>
-  filter(year >= 2010) |>
+Baruch_enrollment <- IPEDS |>
+  filter(str_detect(institution_name, "Baruch"), year >= 2010) |>
   group_by(year) |>
-  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
   arrange(year) |>
   mutate(
     prev_enrollment = lag(total_enrollment),
     change = total_enrollment - prev_enrollment,
-    percentage_change = (total_enrollment - prev_enrollment) / prev_enrollment * 100
-  ) |>
+    percent_change = (change / prev_enrollment) * 100
+  )
+
+Baruch_enrollment |>
   print(n = Inf, width = Inf)
 
 # 4 At what 5 institutions did the fraction of white students decrease the most over the period from 2010 to 2020?
@@ -318,8 +307,7 @@ IPEDS |>
   group_by(institution_name, year) |>
   summarize(
     total_students = sum(total_enrollment, na.rm = TRUE),
-    white_students = sum(enrollment_m_whit, na.rm = TRUE) + sum(enrollment_f_whit, na.rm = TRUE),
-    .groups = "drop"
+    white_students = sum(enrollment_whit, na.rm = TRUE)
   ) |>
   mutate(fraction_white = white_students / total_students) |>
   select(institution_name, year, fraction_white) |>
@@ -330,8 +318,8 @@ IPEDS |>
   ) |>
   filter(!is.na(year_2010) & !is.na(year_2020)) |>
   mutate(change_fraction_white = year_2020 - year_2010) |>
-  arrange(change_fraction_white) |> 
-  slice_head(n = 5) |>
+  slice_min(order_by = change_fraction_white, n = 5, with_ties = FALSE) |>
+  arrange(change_fraction_white) |>
   print()
 
 # 5 In which 3 states did the fraction of female undergraduates increase the most over the period from 2010 to 2024?
@@ -342,10 +330,15 @@ IPEDS |>
   group_by(state, year) |>
   summarize(
     total_students = sum(total_enrollment, na.rm = TRUE),
-    female_students = sum(across(contains("enrollment_f")), na.rm = TRUE),
+    total_f_enrollment = sum(
+      enrollment_f_aian + enrollment_f_asia + enrollment_f_bkaa + enrollment_f_hisp +
+        enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn +
+        enrollment_f_nral,
+      na.rm = TRUE
+    ),
     .groups = "drop"
   ) |>
-  mutate(fraction_female = female_students / total_students) |>
+  mutate(fraction_female = total_f_enrollment / total_students) |>
   select(state, year, fraction_female) |>
   pivot_wider(
     names_from = year,
@@ -358,9 +351,12 @@ IPEDS |>
   slice_head(n = 5) |>
   print()
 
+glimpse(IPEDS)
 
-
-
+IPEDS |>
+  filter(is_cuny == TRUE) |>
+  distinct(institution_name) |>
+  print(n = 200)
 
 
 
