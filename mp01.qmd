@@ -1,6 +1,4 @@
-**This is only a basic Mini-Project Template.**
-**Delete this note and customize formatting according to your preferences and**
-**the Mini-Project instructions. Your document must start the `---` below**
+
 ---
 title: "Mini-Project 01 - Assessing the Impact of SFFA on Campus Diversity One-Year Later"
 author: "jackee101"
@@ -17,19 +15,14 @@ In this mini-project, I intend to perform an analysis on the first set of post -
 
 ## Data Acquisition and Preparation
 
+### Task 1
+
 Code related to Data Acquisition and Preparation goes here.
 
-Remember that code blocks look like this: 
-
-#' Acquire IPEDS Data for MP#01
-#' 
-#' This function will acquire and standardize all data for MP#01
-#' from IPEDS (https://nces.ed.gov/ipeds/datacenter/DataFiles.aspx)
-#' 
-#' We're starting in 2010 as the data seems to be reasonably complete 
-#' after that point. 
 
 ```
+# Task 1 Data Acquisition
+
 acquire_ipeds_data <- function(start_year=2010, end_year=2024){
     library(tidyverse)
     library(glue)
@@ -156,11 +149,459 @@ Code related to Exploratory Data Analysis goes here. This may include
 exploratory graphics, instructor-provided exploratory questions, or other
 similar elements. 
 
+### Task 2: Identify CUNY Schools
+
+```
+IPEDS <- IPEDS |>
+  mutate(is_cuny = str_detect(institution_name, "CUNY"))
+```
+
+### Task 3: Identify UC and CAl State Schools
+
+```
+IPEDS <- IPEDS |>
+  mutate(is_calpublic = str_detect(institution_name,"University of California") |
+           str_detect(institution_name,"California State University"))
+```
+
+### Task 4 Intial EDA Pass
+
+```
+glimpse(IPEDS)
+```
+
+Glimpse shows the type of data each column has. Year data are all int. Level, state, institution_name are chr. Is_cuny and is_calpublic are lgl. And the rest are dbl.
+
+```
+summary(IPEDS)
+```
+
+Summmary shows the min, median, max, and quartiles of numeric data. It shows the length of character data and the number of true/false for logic data.
+
+### Task 5 Exploratory Questions
+
+```
+IPEDS <- IPEDS |>
+  mutate(enrollment_aian = enrollment_m_aian + enrollment_f_aian)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_asia = enrollment_m_asia + enrollment_f_asia)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_bkaa = enrollment_m_bkaa + enrollment_f_bkaa)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_hisp = enrollment_m_hisp + enrollment_f_hisp)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_nhpi = enrollment_m_nhpi + enrollment_f_nhpi)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_whit = enrollment_m_whit + enrollment_f_whit)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_2mor = enrollment_m_2mor + enrollment_f_2mor)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_unkn = enrollment_m_unkn + enrollment_f_unkn)
+
+IPEDS <- IPEDS |>
+  mutate(enrollment_nral = enrollment_m_nral + enrollment_f_nral)
+
+IPEDS <- IPEDS |>
+  mutate(total_enrollment = enrollment_aian + enrollment_asia + enrollment_bkaa + enrollment_hisp + enrollment_nhpi + enrollment_whit + enrollment_2mor + enrollment_unkn + enrollment_nral)
+```
+
+
+### 1 How many distinct institutions appear in this data set?
+Answer: 11243
+
+```
+IPEDS |>
+  distinct(institution_name)
+```
+
+### 2 How many graduate students were enrolled at Baruch in 2024?
+Answer: 3585
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Baruch") & 
+           str_detect(level, "graduate") &
+           year == 2024) |>
+  summarize(total_enrollment)
+```
+
+### 3  How many total students were enrolled at Baruch in 2024?
+Answer: 20081
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Baruch") &
+        !str_detect(level, "first year") &
+           year == 2024) |>
+  select(total_enrollment)
+
+3585 + 16496
+```
+
+### 4 Which institution had the highest number of enrolled female students in 2019?
+Answer: Western Governors University 62737
+
+```
+IPEDS |>
+    filter(year == 2019) |>
+    mutate(total_f_enrollment = enrollment_f_aian + enrollment_f_asia+ enrollment_f_bkaa + enrollment_f_hisp + enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn + enrollment_f_nral) |>
+    select(institution_name, total_f_enrollment) |>
+    slice_max(total_f_enrollment, n = 5)
+```
+
+### 5 Which institution with over 1000 total students admitted the highest proportion of Native Hawaiian or Pacific Islander (nhpi) first-year undergraduates in 2024?
+### Report at least both the institution and the fraction of relevant students.
+Answer: Northeast Technology Center, 20.8%
+
+```
+IPEDS |>
+  filter(str_detect(level, "first year") &
+           year == 2024) |>
+  group_by(institution_name) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    enrollment_aian = sum(enrollment_aian, na.rm = TRUE)
+  ) |>
+  mutate(
+    pct_aian = enrollment_aian / total_enrollment
+  )|>
+  filter(total_enrollment > 1000) |>
+  slice_max(pct_aian,n=5)
+```
+
+
+
+### Task 6 Exploratory Questions
+
+### 1 Which 5 states had the highest number of graduate students across all institutions located in that state?
+Answer: CA, TX, NY, FL, IL
+
+```
+IPEDS |>
+  group_by(state) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
+  slice_max(total_enrollment, n=5)
+```
+
+### 2 In 2024, how many first year undergraduate students were enrolled at CUNY colleges and which colleges did they attend? Report both absolute enrollment numbers and percent of total first-year undergraduates?
+# 
+
+```
+IPEDS |>
+  filter(year == 2024 &
+        is_cuny == TRUE)|>
+  group_by(institution_name) |>
+   summarize(
+    first_year_enrollment = sum(
+      total_enrollment[str_detect(level, "first year")],
+      na.rm = TRUE
+    ),
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
+  mutate(
+    percent_first_year = first_year_enrollment / total_enrollment * 100
+  ) |>
+  gt()
+```
+    
+### 3 How has Baruch’s total undergraduate enrollment changed over the study period? Report both enrollment numbers and percent change year-over-year.
+
+```
+library(gt)
+
+Baruch_enrollment <- IPEDS |>
+  filter(str_detect(institution_name, "Baruch"), year >= 2010) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
+  arrange(year) |>
+  mutate(
+    prev_enrollment = lag(total_enrollment),
+    change = total_enrollment - prev_enrollment,
+    percent_change = (change / prev_enrollment) * 100
+  )
+
+Baruch_enrollment |>
+  gt() |>
+  fmt_number(columns = c(total_enrollment, prev_enrollment, change), decimals = 0) |>
+  fmt_number(columns = percent_change, decimals = 2)
+```
+
+### 4 At what 5 institutions did the fraction of white students decrease the most over the period from 2010 to 2020?
+* University of the Cumberlands
+* Detroit Business Institute-Downriver
+* Paul Mitchell the School-Rhode Island
+* Robert Paul Academy of Cosmetology
+* Vista College
+
+```
+IPEDS |>
+  filter(year %in% c(2010, 2020)) |>
+  group_by(institution_name, year) |>
+  summarize(
+    total_students = sum(total_enrollment, na.rm = TRUE),
+    white_students = sum(enrollment_whit, na.rm = TRUE)
+  ) |>
+  mutate(fraction_white = white_students / total_students) |>
+  select(institution_name, year, fraction_white) |>
+  pivot_wider(
+    names_from = year,
+    values_from = fraction_white,
+    names_prefix = "year_"
+  ) |>
+  filter(!is.na(year_2010) & !is.na(year_2020)) |>
+  mutate(change_fraction_white = year_2020 - year_2010) |>
+  slice_min(order_by = change_fraction_white, n = 5, with_ties = FALSE) |>
+  arrange(change_fraction_white) |>
+  print()
+```
+
+### 5 In which 3 states did the fraction of female undergraduates increase the most over the period from 2010 to 2024?
+Answer: AS, FM, NH
+
+```
+IPEDS |>
+  filter(year %in% c(2010, 2024)) |>
+  group_by(state, year) |>
+  summarize(
+    total_students = sum(total_enrollment, na.rm = TRUE),
+    total_f_enrollment = sum(
+      enrollment_f_aian + enrollment_f_asia + enrollment_f_bkaa + enrollment_f_hisp +
+        enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn +
+        enrollment_f_nral,
+      na.rm = TRUE
+    ),
+    .groups = "drop"
+  ) |>
+  mutate(fraction_female = total_f_enrollment / total_students) |>
+  select(state, year, fraction_female) |>
+  pivot_wider(
+    names_from = year,
+    values_from = fraction_female,
+    names_prefix = "year_"
+  ) |>
+  filter(!is.na(year_2010) & !is.na(year_2024)) |>
+  mutate(change_fraction_female = year_2024 - year_2010) |>
+  arrange(desc(change_fraction_female)) |>  # largest increase first
+  slice_head(n = 5) |>
+  print()
+```
+
 ## Final Insights and Deliverable
 
-Code related to the final deliverable of the assignment goes here. 
+Select a school
+
+```
+IPEDS |>
+  filter(is_cuny == TRUE) |>
+  distinct(institution_name) |>
+  print(n = 200)
+```
+Look at enrollment by  year
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE) |>
+  group_by(year,institution_name) |>
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE))
+```
+  
+Mean enrollment 2010 -2024
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |>
+  summarize(mean_enrollment = mean(total_enrollment))
+```
+
+Student makeup (#)
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )
+```
+
+Student makeup through 2010 - 2024 (%)
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
+```
+
+Mean of student proportion
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  ) |>
+  ungroup() |>
+  summarize(
+    mean_prop_whitasia = mean(prop_whitasia, na.rm = TRUE),
+    mean_prop_other = mean(prop_other, na.rm = TRUE))
+```
+
+First year enrollment
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           str_detect(level,"first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
+```
+
+California school: California State University-Los Angeles
+
+```
+IPEDS |>
+  filter(is_calpublic == TRUE) |>
+  group_by(institution_name) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
+  print(n=20)
+
+```
+
+Enrollment California State University-Los Angeles
+
+```
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           str_detect(level,"first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
 
 
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )
+
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  ) 
+```
+
+::: {.callout-note title="AI Usage Statement" collapse="true"}
+
+ChatGPT was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools. Additionally, ChatGPT was used to provide additional background information on the topic and to brainstorm ideas for the final open-ended prompt. 
+
+:::
 
 ------------------------------------------------------------------------
 
