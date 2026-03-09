@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="jackee101">
+
+<title>Mini-Project 01 - Assessing the Impact of SFFA on Campus Diversity One-Year Later – STA 9750 Submission Material</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-0c86f800422ac82d2a7a51bc8f02a127.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">STA 9750 Submission Material</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Mini-Project 01 - Assessing the Impact of SFFA on Campus Diversity One-Year Later</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>jackee101 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In this mini-project, I intend to perform an analysis on the first set of post - SFFA admissions data and pre - SFFA admissions data to see if there were any changes following the decision.</p>
+</section>
+<section id="data-acquisition-and-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition-and-preparation">Data Acquisition and Preparation</h2>
+<section id="task-1" class="level3">
+<h3 class="anchored" data-anchor-id="task-1">Task 1</h3>
+<p>Code related to Data Acquisition and Preparation goes here.</p>
+<pre><code># Task 1 Data Acquisition
+
+acquire_ipeds_data &lt;- function(start_year=2010, end_year=2024){
+    library(tidyverse)
+    library(glue)
+    
+    data_dir &lt;- file.path("data", "mp01")
+    
+    if(!dir.exists(data_dir)){
+        dir.create(data_dir, showWarnings=FALSE, recursive=TRUE)
+    }
+    
+    YEARS &lt;- seq(start_year, end_year)
+    
+    EFA_ALL &lt;- map(YEARS, function(yy){
+        if(yy &lt;= 2022){
+            ef_url &lt;- glue("https://nces.ed.gov/ipeds/datacenter/data/EF{yy}A.zip")
+            
+        } else {
+            ef_url &lt;- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=EF{yy}A&amp;HasRV=0&amp;type=csv")
+        }
+        
+        ef_file &lt;- file.path(data_dir, glue("ef{yy}a.csv.zip"))
+        
+        if(!file.exists(ef_file)){
+            message(glue("Downloading Enrollment Data for {yy} from {ef_url}"))
+            download.file(ef_url, destfile = ef_file, quiet=TRUE, mode="wb")    
+        }
+        
+        read_csv(ef_file, 
+                 show_col_types=FALSE) |&gt;
+            mutate(year = yy, 
+                   # American Indian or Alaskan Native
+                   enrollment_m_aian = EFAIANM, 
+                   enrollment_f_aian = EFAIANW, 
+                   # Asian
+                   enrollment_m_asia = EFASIAM, 
+                   enrollment_f_asia = EFASIAW, 
+                   # Black or African-American, 
+                   enrollment_m_bkaa = EFBKAAM, 
+                   enrollment_f_bkaa = EFBKAAW, 
+                   # Hispanic 
+                   enrollment_m_hisp = EFHISPM, 
+                   enrollment_f_hisp = EFHISPW, 
+                   # Native Hawaiian or Other Pacific Islander 
+                   enrollment_m_nhpi = EFNHPIM, 
+                   enrollment_f_nhpi = EFNHPIW, 
+                   # White
+                   enrollment_m_whit = EFWHITM, 
+                   enrollment_f_whit = EFWHITW, 
+                   # Two or More Races
+                   enrollment_m_2mor = EF2MORM, 
+                   enrollment_f_2mor = EF2MORW, 
+                   # Unknown / Undisclosed Race
+                   enrollment_m_unkn = EFUNKNM, 
+                   enrollment_f_unkn = EFUNKNW, 
+                   # US Non-Resident
+                   enrollment_m_nral = EFNRALM, 
+                   enrollment_f_nral = EFNRALW, 
+            ) |&gt; filter(
+                (EFALEVEL %in% c(2, 12)) | (LINE %in% c(1, 15))
+                # Per 2024 Data Dictionary, 
+                # - EFALEVEL 2 = undergrad 
+                # - EFALELVE 12 = grad
+                # - Line 1 = first year first time full-time undergrad
+                # - Line 15 = first year first time part-time undergrad
+            ) |&gt; mutate(level = case_when(
+                       EFALEVEL == 2 ~ "all undergrad", 
+                       EFALEVEL == 12 ~ "all graduate",
+                       LINE %in% c(1, 15) ~ "first year undergrad"
+                   )
+            ) |&gt;
+            select(institution_id = UNITID, 
+                   year, 
+                   level,
+                   starts_with("enrollment_")) |&gt;
+            group_by(institution_id, 
+                     year, 
+                     level) |&gt;
+            summarize(across(starts_with("enrollment_"), sum), 
+                      .groups = "drop")
+        
+    }) |&gt; bind_rows()
+    
+    DESC_ALL &lt;- map(YEARS, function(yy){
+        if(yy &lt;= 2022){
+            hd_url &lt;- glue("https://nces.ed.gov/ipeds/datacenter/data/HD{yy}.zip")
+            
+        } else {
+            hd_url &lt;- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=HD{yy}&amp;HasRV=0&amp;type=csv")
+        }
+        
+        hd_file &lt;- file.path(data_dir, glue("hd{yy}.csv.zip"))
+        
+        if(!file.exists(hd_file)){
+            message(glue("Downloading Institutional Descriptions for {yy} from {hd_url}"))
+            download.file(hd_url, destfile = hd_file, quiet=TRUE, mode="wb")    
+        }
+        
+        suppressWarnings(
+            read_csv(hd_file, 
+                 show_col_types=FALSE, 
+                 locale=locale(encoding=if_else(yy==2024, "utf-8", "windows-1252"))) |&gt;
+            mutate(year = yy, 
+                   INSTNM) |&gt; 
+            select(institution_id = UNITID, 
+                   institution_name = INSTNM, 
+                   state = STABBR, 
+                   year)
+        )
+        
+    }) |&gt; bind_rows()
+    
+    inner_join(EFA_ALL, 
+               DESC_ALL, 
+               join_by(institution_id == institution_id, 
+                       year == year))
+}
+
+IPEDS &lt;- acquire_ipeds_data()</code></pre>
+</section>
+</section>
+<section id="exploratory-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-analysis">Exploratory Analysis</h2>
+<p>Code related to Exploratory Data Analysis goes here. This may include exploratory graphics, instructor-provided exploratory questions, or other similar elements.</p>
+<section id="task-2-identify-cuny-schools" class="level3">
+<h3 class="anchored" data-anchor-id="task-2-identify-cuny-schools">Task 2: Identify CUNY Schools</h3>
+<pre><code>IPEDS &lt;- IPEDS |&gt;
+  mutate(is_cuny = str_detect(institution_name, "CUNY"))</code></pre>
+</section>
+<section id="task-3-identify-uc-and-cal-state-schools" class="level3">
+<h3 class="anchored" data-anchor-id="task-3-identify-uc-and-cal-state-schools">Task 3: Identify UC and CAl State Schools</h3>
+<pre><code>IPEDS &lt;- IPEDS |&gt;
+  mutate(is_calpublic = str_detect(institution_name,"University of California") |
+           str_detect(institution_name,"California State University"))</code></pre>
+</section>
+<section id="task-4-intial-eda-pass" class="level3">
+<h3 class="anchored" data-anchor-id="task-4-intial-eda-pass">Task 4 Intial EDA Pass</h3>
+<pre><code>glimpse(IPEDS)</code></pre>
+<p>Glimpse shows the type of data each column has. Year data are all int. Level, state, institution_name are chr. Is_cuny and is_calpublic are lgl. And the rest are dbl.</p>
+<pre><code>summary(IPEDS)</code></pre>
+<p>Summmary shows the min, median, max, and quartiles of numeric data. It shows the length of character data and the number of true/false for logic data.</p>
+</section>
+<section id="task-5-exploratory-questions" class="level3">
+<h3 class="anchored" data-anchor-id="task-5-exploratory-questions">Task 5 Exploratory Questions</h3>
+<pre><code>IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_aian = enrollment_m_aian + enrollment_f_aian)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_asia = enrollment_m_asia + enrollment_f_asia)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_bkaa = enrollment_m_bkaa + enrollment_f_bkaa)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_hisp = enrollment_m_hisp + enrollment_f_hisp)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_nhpi = enrollment_m_nhpi + enrollment_f_nhpi)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_whit = enrollment_m_whit + enrollment_f_whit)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_2mor = enrollment_m_2mor + enrollment_f_2mor)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_unkn = enrollment_m_unkn + enrollment_f_unkn)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(enrollment_nral = enrollment_m_nral + enrollment_f_nral)
+
+IPEDS &lt;- IPEDS |&gt;
+  mutate(total_enrollment = enrollment_aian + enrollment_asia + enrollment_bkaa + enrollment_hisp + enrollment_nhpi + enrollment_whit + enrollment_2mor + enrollment_unkn + enrollment_nral)</code></pre>
+</section>
+<section id="how-many-distinct-institutions-appear-in-this-data-set" class="level3">
+<h3 class="anchored" data-anchor-id="how-many-distinct-institutions-appear-in-this-data-set">1 How many distinct institutions appear in this data set?</h3>
+<p>Answer: 11243</p>
+<pre><code>IPEDS |&gt;
+  distinct(institution_name)</code></pre>
+</section>
+<section id="how-many-graduate-students-were-enrolled-at-baruch-in-2024" class="level3">
+<h3 class="anchored" data-anchor-id="how-many-graduate-students-were-enrolled-at-baruch-in-2024">2 How many graduate students were enrolled at Baruch in 2024?</h3>
+<p>Answer: 3585</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Baruch") &amp; 
+           str_detect(level, "graduate") &amp;
+           year == 2024) |&gt;
+  summarize(total_enrollment)</code></pre>
+</section>
+<section id="how-many-total-students-were-enrolled-at-baruch-in-2024" class="level3">
+<h3 class="anchored" data-anchor-id="how-many-total-students-were-enrolled-at-baruch-in-2024">3 How many total students were enrolled at Baruch in 2024?</h3>
+<p>Answer: 20081</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Baruch") &amp;
+        !str_detect(level, "first year") &amp;
+           year == 2024) |&gt;
+  select(total_enrollment)
+
+3585 + 16496</code></pre>
+</section>
+<section id="which-institution-had-the-highest-number-of-enrolled-female-students-in-2019" class="level3">
+<h3 class="anchored" data-anchor-id="which-institution-had-the-highest-number-of-enrolled-female-students-in-2019">4 Which institution had the highest number of enrolled female students in 2019?</h3>
+<p>Answer: Western Governors University 62737</p>
+<pre><code>IPEDS |&gt;
+    filter(year == 2019) |&gt;
+    mutate(total_f_enrollment = enrollment_f_aian + enrollment_f_asia+ enrollment_f_bkaa + enrollment_f_hisp + enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn + enrollment_f_nral) |&gt;
+    select(institution_name, total_f_enrollment) |&gt;
+    slice_max(total_f_enrollment, n = 5)</code></pre>
+</section>
+<section id="which-institution-with-over-1000-total-students-admitted-the-highest-proportion-of-native-hawaiian-or-pacific-islander-nhpi-first-year-undergraduates-in-2024" class="level3">
+<h3 class="anchored" data-anchor-id="which-institution-with-over-1000-total-students-admitted-the-highest-proportion-of-native-hawaiian-or-pacific-islander-nhpi-first-year-undergraduates-in-2024">5 Which institution with over 1000 total students admitted the highest proportion of Native Hawaiian or Pacific Islander (nhpi) first-year undergraduates in 2024?</h3>
+</section>
+<section id="report-at-least-both-the-institution-and-the-fraction-of-relevant-students." class="level3">
+<h3 class="anchored" data-anchor-id="report-at-least-both-the-institution-and-the-fraction-of-relevant-students.">Report at least both the institution and the fraction of relevant students.</h3>
+<p>Answer: Northeast Technology Center, 20.8%</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(level, "first year") &amp;
+           year == 2024) |&gt;
+  group_by(institution_name) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    enrollment_aian = sum(enrollment_aian, na.rm = TRUE)
+  ) |&gt;
+  mutate(
+    pct_aian = enrollment_aian / total_enrollment
+  )|&gt;
+  filter(total_enrollment &gt; 1000) |&gt;
+  slice_max(pct_aian,n=5)</code></pre>
+</section>
+<section id="task-6-exploratory-questions" class="level3">
+<h3 class="anchored" data-anchor-id="task-6-exploratory-questions">Task 6 Exploratory Questions</h3>
+</section>
+<section id="which-5-states-had-the-highest-number-of-graduate-students-across-all-institutions-located-in-that-state" class="level3">
+<h3 class="anchored" data-anchor-id="which-5-states-had-the-highest-number-of-graduate-students-across-all-institutions-located-in-that-state">1 Which 5 states had the highest number of graduate students across all institutions located in that state?</h3>
+<p>Answer: CA, TX, NY, FL, IL</p>
+<pre><code>IPEDS |&gt;
+  group_by(state) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |&gt;
+  slice_max(total_enrollment, n=5)</code></pre>
+</section>
+<section id="in-2024-how-many-first-year-undergraduate-students-were-enrolled-at-cuny-colleges-and-which-colleges-did-they-attend-report-both-absolute-enrollment-numbers-and-percent-of-total-first-year-undergraduates" class="level3">
+<h3 class="anchored" data-anchor-id="in-2024-how-many-first-year-undergraduate-students-were-enrolled-at-cuny-colleges-and-which-colleges-did-they-attend-report-both-absolute-enrollment-numbers-and-percent-of-total-first-year-undergraduates">2 In 2024, how many first year undergraduate students were enrolled at CUNY colleges and which colleges did they attend? Report both absolute enrollment numbers and percent of total first-year undergraduates?</h3>
+</section>
+</section>
+<section id="section" class="level1">
+<h1></h1>
+<pre><code>IPEDS |&gt;
+  filter(year == 2024 &amp;
+        is_cuny == TRUE)|&gt;
+  group_by(institution_name) |&gt;
+   summarize(
+    first_year_enrollment = sum(
+      total_enrollment[str_detect(level, "first year")],
+      na.rm = TRUE
+    ),
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |&gt;
+  mutate(
+    percent_first_year = first_year_enrollment / total_enrollment * 100
+  ) |&gt;
+  gt()</code></pre>
+<section id="how-has-baruchs-total-undergraduate-enrollment-changed-over-the-study-period-report-both-enrollment-numbers-and-percent-change-year-over-year." class="level3">
+<h3 class="anchored" data-anchor-id="how-has-baruchs-total-undergraduate-enrollment-changed-over-the-study-period-report-both-enrollment-numbers-and-percent-change-year-over-year.">3 How has Baruch’s total undergraduate enrollment changed over the study period? Report both enrollment numbers and percent change year-over-year.</h3>
+<pre><code>library(gt)
+
+Baruch_enrollment &lt;- IPEDS |&gt;
+  filter(str_detect(institution_name, "Baruch"), year &gt;= 2010) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |&gt;
+  arrange(year) |&gt;
+  mutate(
+    prev_enrollment = lag(total_enrollment),
+    change = total_enrollment - prev_enrollment,
+    percent_change = (change / prev_enrollment) * 100
+  )
+
+Baruch_enrollment |&gt;
+  gt() |&gt;
+  fmt_number(columns = c(total_enrollment, prev_enrollment, change), decimals = 0) |&gt;
+  fmt_number(columns = percent_change, decimals = 2)</code></pre>
+</section>
+<section id="at-what-5-institutions-did-the-fraction-of-white-students-decrease-the-most-over-the-period-from-2010-to-2020" class="level3">
+<h3 class="anchored" data-anchor-id="at-what-5-institutions-did-the-fraction-of-white-students-decrease-the-most-over-the-period-from-2010-to-2020">4 At what 5 institutions did the fraction of white students decrease the most over the period from 2010 to 2020?</h3>
+<ul>
+<li>University of the Cumberlands</li>
+<li>Detroit Business Institute-Downriver</li>
+<li>Paul Mitchell the School-Rhode Island</li>
+<li>Robert Paul Academy of Cosmetology</li>
+<li>Vista College</li>
+</ul>
+<pre><code>IPEDS |&gt;
+  filter(year %in% c(2010, 2020)) |&gt;
+  group_by(institution_name, year) |&gt;
+  summarize(
+    total_students = sum(total_enrollment, na.rm = TRUE),
+    white_students = sum(enrollment_whit, na.rm = TRUE)
+  ) |&gt;
+  mutate(fraction_white = white_students / total_students) |&gt;
+  select(institution_name, year, fraction_white) |&gt;
+  pivot_wider(
+    names_from = year,
+    values_from = fraction_white,
+    names_prefix = "year_"
+  ) |&gt;
+  filter(!is.na(year_2010) &amp; !is.na(year_2020)) |&gt;
+  mutate(change_fraction_white = year_2020 - year_2010) |&gt;
+  slice_min(order_by = change_fraction_white, n = 5, with_ties = FALSE) |&gt;
+  arrange(change_fraction_white) |&gt;
+  print()</code></pre>
+</section>
+<section id="in-which-3-states-did-the-fraction-of-female-undergraduates-increase-the-most-over-the-period-from-2010-to-2024" class="level3">
+<h3 class="anchored" data-anchor-id="in-which-3-states-did-the-fraction-of-female-undergraduates-increase-the-most-over-the-period-from-2010-to-2024">5 In which 3 states did the fraction of female undergraduates increase the most over the period from 2010 to 2024?</h3>
+<p>Answer: AS, FM, NH</p>
+<pre><code>IPEDS |&gt;
+  filter(year %in% c(2010, 2024)) |&gt;
+  group_by(state, year) |&gt;
+  summarize(
+    total_students = sum(total_enrollment, na.rm = TRUE),
+    total_f_enrollment = sum(
+      enrollment_f_aian + enrollment_f_asia + enrollment_f_bkaa + enrollment_f_hisp +
+        enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn +
+        enrollment_f_nral,
+      na.rm = TRUE
+    ),
+    .groups = "drop"
+  ) |&gt;
+  mutate(fraction_female = total_f_enrollment / total_students) |&gt;
+  select(state, year, fraction_female) |&gt;
+  pivot_wider(
+    names_from = year,
+    values_from = fraction_female,
+    names_prefix = "year_"
+  ) |&gt;
+  filter(!is.na(year_2010) &amp; !is.na(year_2024)) |&gt;
+  mutate(change_fraction_female = year_2024 - year_2010) |&gt;
+  arrange(desc(change_fraction_female)) |&gt;  # largest increase first
+  slice_head(n = 5) |&gt;
+  print()</code></pre>
+</section>
+<section id="final-insights-and-deliverable" class="level2">
+<h2 class="anchored" data-anchor-id="final-insights-and-deliverable">Final Insights and Deliverable</h2>
+<p>Select a school</p>
+<pre><code>IPEDS |&gt;
+  filter(is_cuny == TRUE) |&gt;
+  distinct(institution_name) |&gt;
+  print(n = 200)</code></pre>
+<p>Look at enrollment by year</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE) |&gt;
+  group_by(year,institution_name) |&gt;
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE))</code></pre>
+<p>Mean enrollment 2010 -2024</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |&gt;
+  summarize(mean_enrollment = mean(total_enrollment))</code></pre>
+<p>Student makeup (#)</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )</code></pre>
+<p>Student makeup through 2010 - 2024 (%)</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )</code></pre>
+<p>Mean of student proportion</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  ) |&gt;
+  ungroup() |&gt;
+  summarize(
+    mean_prop_whitasia = mean(prop_whitasia, na.rm = TRUE),
+    mean_prop_other = mean(prop_other, na.rm = TRUE))</code></pre>
+<p>First year enrollment</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "Staten Island") &amp;
+           is_cuny == TRUE &amp;
+           str_detect(level,"first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )</code></pre>
+<p>California school: California State University-Los Angeles</p>
+<pre><code>IPEDS |&gt;
+  filter(is_calpublic == TRUE) |&gt;
+  group_by(institution_name) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |&gt;
+  print(n=20)
+</code></pre>
+<p>Enrollment California State University-Los Angeles</p>
+<pre><code>IPEDS |&gt;
+  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
+           str_detect(level,"first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
+
+
+IPEDS |&gt;
+  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )
+
+IPEDS |&gt;
+  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
+           !str_detect(level, "first year")) |&gt;
+  group_by(year) |&gt;
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  ) </code></pre>
+<div class="callout callout-style-default callout-note callout-titled" title="AI Usage Statement">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>AI Usage Statement
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>ChatGPT was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools. Additionally, ChatGPT was used to provide additional background information on the topic and to brainstorm ideas for the final open-ended prompt.</p>
+</div>
+</div>
+</div>
+<hr>
+<p>This work ©2025 by jackee101 was initially prepared as a Mini-Project for STA 9750 at Baruch College. More details about this course can be found at <a href="https://michael-weylandt.com/STA9750">the course site</a> and instructions for this assignment can be found at <a href="https://michael-weylandt.com/STA9750/mini/mini01.html">MP #01</a></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jackeee101\.github\.io\/STA9750-2026-SPRING\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,62 @@
+---
+title: "311 Response & Resolution: A Spatial and Socioeconomic Analysis"
+subtitle: "STA 9750 - Project Proposal"
+author: "Group 2: Evelyn Rodriguez, Jackie Chen, Mary Lycke, Raul Sola "
+format: 
+  revealjs:
+    theme: sky
+    transition: slide
+    scrollable: true
+---
+
+## Research Question
+
+What factors drive 311 response and resolution times, and do these patterns suggest segmented prioritization based on neighborhood location or income level?
+
+---
+
+## Background & Motivation
+
+* **Chronic Issues:** There have been long-standing complaints regarding wildly varying resolution times across different city agencies
+* [**Resource Allocation:**](https://www.nyc.gov/mayors-office/news/2025/06/mayor-adams-nypd-commissioner-tisch-expand-quality-life-division-continue-enhancing-public) City agencies have investigated how to target resources more effectively to fix these gaps.
+* **Public Perception:** Recent reports (e.g., [Streetsblog](https://nyc.streetsblog.org/2025/06/11/data-dumps-nypd-earns-an-f-from-public-on-poor-311-response)) indicate public dissatisfaction with agency performance, specifically the NYPD.
+
+---
+
+## Public Data Sources
+
+We will utilize the following primary datasets:
+
+1. [**NYC Open Data - 311 Service Requests:**](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9/about_data) Contains incident types, locations (Lat/Long), and agency assignments from 2020–Present. 
+2. [**NYC Open Data - 311 SLAs:**](https://data.cityofnewyork.us/City-Government/311-Service-Level-Agreements/cs9t-e3x8/about_data) Provides the Service Level Agreement commitments to measure agency compliance. 
+3. [**NYC Planning - Population Fact Finder:**](https://popfactfinder.planning.nyc.gov/about) Used to retrieve demographic and median household income data by neighborhood (ACS data). 
+4. [**Historical Weather:**](https://www.kaggle.com/datasets/aadimator/nyc-weather-2016-to-2022 ) To evaluate the impact of extreme weather events on response times. 
+
+---
+
+## Inquiries to Explore
+
+* **SQ1 (Operational):** How do resolution times vary between city agencies (NYPD, DSNY, DOT) compared to their SLA commitments?
+* **SQ2 (Socioeconomic):** Is there a correlation between average household income/property values and resolution speed?
+* **SQ3 (Temporal):** Do periods of extreme weather significantly delay response times across agencies? 
+* **SQ4 (Technological):** Which request methods (Phone, Web, App) yield the fastest resolution? 
+
+---
+
+## Analytical Plan
+
+### Data Preparation & Processing
+* **Join Logic:** We will perform a **spatial join** using Latitude/Longitude to link 311 requests with other relevant sources.
+* **Metric Creation:** We will perform calculations such as `Resolution_Time` by subtracting `Created_Date` from `Closed_Date` using R.
+
+### Statistical Inference
+* **Hypothesis Testing:** We will use statistical measures to determine if the difference in resolution times between income quartiles, for example, is statistically significant.
+* **Weather Modeling:** We will merge NASA weather data to isolate the effect of "Weather Events" as a predictor of service backlogs. 
+
+---
+
+## Anticipated Challenges
+
+1. **Data Merging:** The process of merging the 311 dataset with other data sources may be complex due to differences in format.
+2. **Data Volume:** Our 311 request dataset (2020–Present) contains 20,259,421 rows of data 
+3. **Data Cleaning:** Missing resolution descriptions for many requests; some requests marked “closed” without clear resolution 

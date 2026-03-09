@@ -1,0 +1,51 @@
+peer_feedback_assignment_1:
+  issue_number: 3
+  issue_owner: mclycke
+  issue_ok: yes
+  issue_status: OK
+  overall_comments:
+    positive: |-
+      It fulfilled all the requirements of the mini project and had a few personal touches. The student made it a green and grey theme which made it look really nice.
+      None
+      None
+    negative: I think that additional details could be added, ect. changing the location
+      code the assignment came with, adding a LinkedIn link, adding a picture or resume.
+      But since this was not required I think it could do with or without.
+    advice: Adding LinkedIn link, adding pictures, or adding a resume.
+  scores: []
+  mp_number: 0.0
+peer_feedback_assignment_2:
+  issue_number: 18
+  issue_owner: monica-phan26
+  issue_ok: yes
+  issue_status: OK
+  overall_comments:
+    positive: |-
+      It showcases the student's background very well through the picture, the LinkedIn link and the short description.
+      None
+    negative: I think that additional details would've been nice but since it is not
+      a requirement, I don't think it should deduct any points.
+    advice: |-
+      Additional links and images to showcase markdown knowledge.
+      None
+  scores: []
+  mp_number: 0.0
+peer_feedback_assignment_3:
+  issue_number: 21
+  issue_owner: asarker00
+  issue_ok: yes
+  issue_status: OK
+  overall_comments:
+    positive: |-
+      Highly personalized site with lots of functions added. It has links to the mini project and future mini projects. The interface deviates from the format the mini project provides.
+      None
+    negative: |-
+      I think that if the resume button actually linked to an resume it would've been nice.
+      None
+    advice: |-
+      Link the Resume button to either a pdf or LinkedIn
+      None
+  scores: []
+  mp_number: 0.0
+evaluator: jackeee101
+

@@ -1,0 +1,21 @@
+---
+title: "Proposal"
+format: revealjs
+---
+
+# Anticipated Challenges
+
+**Data Volume & Missing Information**
+
+* Our 311 request dataset (2020–Present) contains 20,259,421 rows of data
+* Missing resolution descriptions for many requests
+* Some requests marked “closed” without clear resolution
+
+# Anticipated Challenges
+
+**Data Source Location Segmentation**
+
+* 311 request dataset has borough, longitude, and latitude
+* Other datasets use neighborhoods or lots
+* Must map longitude/latitude to neighborhood boundaries to merge datasets
+

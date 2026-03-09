@@ -146,10 +146,10 @@ IPEDS <- IPEDS |>
 
 glimpse(IPEDS)
 
-# glimpse shows the type of data each column has. 
-# Year data are all int. 
-# Level, state, institution_name are chr. 
-# Is_cuny and is_calpublic are lgl. 
+# glimpse shows the type of data each column has.
+# Year data are all int.
+# Level, state, institution_name are chr.
+# Is_cuny and is_calpublic are lgl.
 # And the rest are dbl.
 
 summary(IPEDS)
@@ -296,7 +296,7 @@ Baruch_enrollment |>
   print(n = Inf, width = Inf)
 
 # 4 At what 5 institutions did the fraction of white students decrease the most over the period from 2010 to 2020?
-# University of the Cumberlands 
+# University of the Cumberlands
 # Detroit Business Institute-Downriver
 # Paul Mitchell the School-Rhode Island
 # Robert Paul Academy of Cosmetology
@@ -353,15 +353,187 @@ IPEDS |>
 
 glimpse(IPEDS)
 
+####################################################
+
+# Final Insights
+
+# select a school
 IPEDS |>
   filter(is_cuny == TRUE) |>
   distinct(institution_name) |>
   print(n = 200)
 
+# look at enrollment by  year
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE) |>
+  group_by(year,institution_name) |>
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE))
+  
+# mean enrollment 2010 -2024
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |>
+  summarize(mean_enrollment = mean(total_enrollment))
+
+# student makeup, number
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )
+ 
+# student makeup through 2010 - 2024 (%)
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
+
+# mean of student proportion
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  ) |>
+  ungroup() |>
+  summarize(
+    mean_prop_whitasia = mean(prop_whitasia, na.rm = TRUE),
+    mean_prop_other = mean(prop_other, na.rm = TRUE))
+
+# first year enrollment
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island") &
+           is_cuny == TRUE &
+           str_detect(level,"first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
+
+# california school: California State University-Los Angeles
+IPEDS |>
+  filter(is_calpublic == TRUE) |>
+  group_by(institution_name) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  ) |>
+  print(n=20)
+
+IPEDS |>
+  filter(str_detect(institution_name, "Staten Island")) |>
+  group_by(institution_name) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE)
+  )
+
+49770+181555
+
+# first year enrollment California State University-Los Angeles
+
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           str_detect(level,"first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
 
 
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
+    total_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    )
+  )
 
-
-
-
-
+IPEDS |>
+  filter(str_detect(institution_name, "California State University-Los Angeles") &
+           !str_detect(level, "first year")) |>
+  group_by(year) |>
+  summarize(
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
+    prop_other = (
+      sum(enrollment_aian, na.rm = TRUE) +
+        sum(enrollment_bkaa, na.rm = TRUE) +
+        sum(enrollment_hisp, na.rm = TRUE) +
+        sum(enrollment_nhpi, na.rm = TRUE) +
+        sum(enrollment_2mor, na.rm = TRUE) +
+        sum(enrollment_unkn, na.rm = TRUE) +
+        sum(enrollment_nral, na.rm = TRUE)
+    ) / total_enrollment
+  )
