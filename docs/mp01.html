@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -122,6 +157,31 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>In this mini-project, I intend to perform an analysis on the first set of post - SFFA admissions data and pre - SFFA admissions data to see if there were any changes following the decision.</p>
@@ -131,126 +191,157 @@ ul.task-list li input[type="checkbox"] {
 <section id="task-1" class="level3">
 <h3 class="anchored" data-anchor-id="task-1">Task 1</h3>
 <p>Code related to Data Acquisition and Preparation goes here.</p>
-<pre><code># Task 1 Data Acquisition
-
-acquire_ipeds_data &lt;- function(start_year=2010, end_year=2024){
-    library(tidyverse)
-    library(glue)
-    
-    data_dir &lt;- file.path("data", "mp01")
-    
-    if(!dir.exists(data_dir)){
-        dir.create(data_dir, showWarnings=FALSE, recursive=TRUE)
-    }
-    
-    YEARS &lt;- seq(start_year, end_year)
-    
-    EFA_ALL &lt;- map(YEARS, function(yy){
-        if(yy &lt;= 2022){
-            ef_url &lt;- glue("https://nces.ed.gov/ipeds/datacenter/data/EF{yy}A.zip")
-            
-        } else {
-            ef_url &lt;- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=EF{yy}A&amp;HasRV=0&amp;type=csv")
-        }
-        
-        ef_file &lt;- file.path(data_dir, glue("ef{yy}a.csv.zip"))
-        
-        if(!file.exists(ef_file)){
-            message(glue("Downloading Enrollment Data for {yy} from {ef_url}"))
-            download.file(ef_url, destfile = ef_file, quiet=TRUE, mode="wb")    
-        }
-        
-        read_csv(ef_file, 
-                 show_col_types=FALSE) |&gt;
-            mutate(year = yy, 
-                   # American Indian or Alaskan Native
-                   enrollment_m_aian = EFAIANM, 
-                   enrollment_f_aian = EFAIANW, 
-                   # Asian
-                   enrollment_m_asia = EFASIAM, 
-                   enrollment_f_asia = EFASIAW, 
-                   # Black or African-American, 
-                   enrollment_m_bkaa = EFBKAAM, 
-                   enrollment_f_bkaa = EFBKAAW, 
-                   # Hispanic 
-                   enrollment_m_hisp = EFHISPM, 
-                   enrollment_f_hisp = EFHISPW, 
-                   # Native Hawaiian or Other Pacific Islander 
-                   enrollment_m_nhpi = EFNHPIM, 
-                   enrollment_f_nhpi = EFNHPIW, 
-                   # White
-                   enrollment_m_whit = EFWHITM, 
-                   enrollment_f_whit = EFWHITW, 
-                   # Two or More Races
-                   enrollment_m_2mor = EF2MORM, 
-                   enrollment_f_2mor = EF2MORW, 
-                   # Unknown / Undisclosed Race
-                   enrollment_m_unkn = EFUNKNM, 
-                   enrollment_f_unkn = EFUNKNW, 
-                   # US Non-Resident
-                   enrollment_m_nral = EFNRALM, 
-                   enrollment_f_nral = EFNRALW, 
-            ) |&gt; filter(
-                (EFALEVEL %in% c(2, 12)) | (LINE %in% c(1, 15))
-                # Per 2024 Data Dictionary, 
-                # - EFALEVEL 2 = undergrad 
-                # - EFALELVE 12 = grad
-                # - Line 1 = first year first time full-time undergrad
-                # - Line 15 = first year first time part-time undergrad
-            ) |&gt; mutate(level = case_when(
-                       EFALEVEL == 2 ~ "all undergrad", 
-                       EFALEVEL == 12 ~ "all graduate",
-                       LINE %in% c(1, 15) ~ "first year undergrad"
-                   )
-            ) |&gt;
-            select(institution_id = UNITID, 
-                   year, 
-                   level,
-                   starts_with("enrollment_")) |&gt;
-            group_by(institution_id, 
-                     year, 
-                     level) |&gt;
-            summarize(across(starts_with("enrollment_"), sum), 
-                      .groups = "drop")
-        
-    }) |&gt; bind_rows()
-    
-    DESC_ALL &lt;- map(YEARS, function(yy){
-        if(yy &lt;= 2022){
-            hd_url &lt;- glue("https://nces.ed.gov/ipeds/datacenter/data/HD{yy}.zip")
-            
-        } else {
-            hd_url &lt;- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=HD{yy}&amp;HasRV=0&amp;type=csv")
-        }
-        
-        hd_file &lt;- file.path(data_dir, glue("hd{yy}.csv.zip"))
-        
-        if(!file.exists(hd_file)){
-            message(glue("Downloading Institutional Descriptions for {yy} from {hd_url}"))
-            download.file(hd_url, destfile = hd_file, quiet=TRUE, mode="wb")    
-        }
-        
-        suppressWarnings(
-            read_csv(hd_file, 
-                 show_col_types=FALSE, 
-                 locale=locale(encoding=if_else(yy==2024, "utf-8", "windows-1252"))) |&gt;
-            mutate(year = yy, 
-                   INSTNM) |&gt; 
-            select(institution_id = UNITID, 
-                   institution_name = INSTNM, 
-                   state = STABBR, 
-                   year)
-        )
-        
-    }) |&gt; bind_rows()
-    
-    inner_join(EFA_ALL, 
-               DESC_ALL, 
-               join_by(institution_id == institution_id, 
-                       year == year))
-}
-
-IPEDS &lt;- acquire_ipeds_data()</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Task 1 Data Acquisition</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>acquire_ipeds_data <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">start_year=</span><span class="dv">2010</span>, <span class="at">end_year=</span><span class="dv">2024</span>){</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(tidyverse)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(glue)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    data_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"data"</span>, <span class="st">"mp01"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(data_dir)){</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dir.create</span>(data_dir, <span class="at">showWarnings=</span><span class="cn">FALSE</span>, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    YEARS <span class="ot">&lt;-</span> <span class="fu">seq</span>(start_year, end_year)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    EFA_ALL <span class="ot">&lt;-</span> <span class="fu">map</span>(YEARS, <span class="cf">function</span>(yy){</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(yy <span class="sc">&lt;=</span> <span class="dv">2022</span>){</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            ef_url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://nces.ed.gov/ipeds/datacenter/data/EF{yy}A.zip"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            ef_url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=EF{yy}A&amp;HasRV=0&amp;type=csv"</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        ef_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_dir, <span class="fu">glue</span>(<span class="st">"ef{yy}a.csv.zip"</span>))</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(ef_file)){</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">"Downloading Enrollment Data for {yy} from {ef_url}"</span>))</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">download.file</span>(ef_url, <span class="at">destfile =</span> ef_file, <span class="at">quiet=</span><span class="cn">TRUE</span>, <span class="at">mode=</span><span class="st">"wb"</span>)    </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">read_csv</span>(ef_file, </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">show_col_types=</span><span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">year =</span> yy, </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># American Indian or Alaskan Native</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_aian =</span> EFAIANM, </span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_aian =</span> EFAIANW, </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Asian</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_asia =</span> EFASIAM, </span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_asia =</span> EFASIAW, </span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Black or African-American, </span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_bkaa =</span> EFBKAAM, </span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_bkaa =</span> EFBKAAW, </span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Hispanic </span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_hisp =</span> EFHISPM, </span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_hisp =</span> EFHISPW, </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Native Hawaiian or Other Pacific Islander </span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_nhpi =</span> EFNHPIM, </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_nhpi =</span> EFNHPIW, </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># White</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_whit =</span> EFWHITM, </span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_whit =</span> EFWHITW, </span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Two or More Races</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_2mor =</span> EF2MORM, </span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_2mor =</span> EF2MORW, </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Unknown / Undisclosed Race</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_unkn =</span> EFUNKNM, </span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_unkn =</span> EFUNKNW, </span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># US Non-Resident</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_m_nral =</span> EFNRALM, </span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>                   <span class="at">enrollment_f_nral =</span> EFNRALW, </span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">|&gt;</span> <span class="fu">filter</span>(</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>                (EFALEVEL <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>)) <span class="sc">|</span> (LINE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">15</span>))</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Per 2024 Data Dictionary, </span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>                <span class="co"># - EFALEVEL 2 = undergrad </span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>                <span class="co"># - EFALELVE 12 = grad</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>                <span class="co"># - Line 1 = first year first time full-time undergrad</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>                <span class="co"># - Line 15 = first year first time part-time undergrad</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">level =</span> <span class="fu">case_when</span>(</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>                       EFALEVEL <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"all undergrad"</span>, </span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>                       EFALEVEL <span class="sc">==</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">"all graduate"</span>,</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>                       LINE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">15</span>) <span class="sc">~</span> <span class="st">"first year undergrad"</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>                   )</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">|&gt;</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(<span class="at">institution_id =</span> UNITID, </span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>                   year, </span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>                   level,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">starts_with</span>(<span class="st">"enrollment_"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>            <span class="fu">group_by</span>(institution_id, </span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>                     year, </span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>                     level) <span class="sc">|&gt;</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>            <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"enrollment_"</span>), sum), </span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>                      <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>    DESC_ALL <span class="ot">&lt;-</span> <span class="fu">map</span>(YEARS, <span class="cf">function</span>(yy){</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(yy <span class="sc">&lt;=</span> <span class="dv">2022</span>){</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>            hd_url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://nces.ed.gov/ipeds/datacenter/data/HD{yy}.zip"</span>)</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>            hd_url <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"https://nces.ed.gov/ipeds/data-generator?year={yy}&amp;tableName=HD{yy}&amp;HasRV=0&amp;type=csv"</span>)</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>        hd_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_dir, <span class="fu">glue</span>(<span class="st">"hd{yy}.csv.zip"</span>))</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(hd_file)){</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>            <span class="fu">message</span>(<span class="fu">glue</span>(<span class="st">"Downloading Institutional Descriptions for {yy} from {hd_url}"</span>))</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>            <span class="fu">download.file</span>(hd_url, <span class="at">destfile =</span> hd_file, <span class="at">quiet=</span><span class="cn">TRUE</span>, <span class="at">mode=</span><span class="st">"wb"</span>)    </span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>        <span class="fu">suppressWarnings</span>(</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>            <span class="fu">read_csv</span>(hd_file, </span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>                 <span class="at">show_col_types=</span><span class="cn">FALSE</span>, </span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>                 <span class="at">locale=</span><span class="fu">locale</span>(<span class="at">encoding=</span><span class="fu">if_else</span>(yy<span class="sc">==</span><span class="dv">2024</span>, <span class="st">"utf-8"</span>, <span class="st">"windows-1252"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">year =</span> yy, </span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>                   INSTNM) <span class="sc">|&gt;</span> </span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(<span class="at">institution_id =</span> UNITID, </span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>                   <span class="at">institution_name =</span> INSTNM, </span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>                   <span class="at">state =</span> STABBR, </span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>                   year)</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(EFA_ALL, </span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>               DESC_ALL, </span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>               <span class="fu">join_by</span>(institution_id <span class="sc">==</span> institution_id, </span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>                       year <span class="sc">==</span> year))</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> <span class="fu">acquire_ipeds_data</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.1     ✔ readr     2.1.6
+✔ ggplot2   4.0.1     ✔ tibble    3.3.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Multiple files in zip: reading 'ef2010a.csv'
+Multiple files in zip: reading 'ef2011a.csv'
+Multiple files in zip: reading 'ef2012a.csv'
+Multiple files in zip: reading 'ef2013a.csv'
+Multiple files in zip: reading 'ef2014a.csv'
+Multiple files in zip: reading 'ef2015a.csv'
+Multiple files in zip: reading 'ef2016a.csv'
+Multiple files in zip: reading 'ef2017a.csv'
+Multiple files in zip: reading 'ef2018a.csv'
+Multiple files in zip: reading 'ef2019a.csv'
+Multiple files in zip: reading 'ef2020a.csv'
+Multiple files in zip: reading 'ef2021a.csv'
+Multiple files in zip: reading 'ef2022a.csv'
+New names:
+Multiple files in zip: reading 'ef2023a.csv'</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="exploratory-analysis" class="level2">
@@ -258,88 +349,257 @@ IPEDS &lt;- acquire_ipeds_data()</code></pre>
 <p>Code related to Exploratory Data Analysis goes here. This may include exploratory graphics, instructor-provided exploratory questions, or other similar elements.</p>
 <section id="task-2-identify-cuny-schools" class="level3">
 <h3 class="anchored" data-anchor-id="task-2-identify-cuny-schools">Task 2: Identify CUNY Schools</h3>
-<pre><code>IPEDS &lt;- IPEDS |&gt;
-  mutate(is_cuny = str_detect(institution_name, "CUNY"))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">is_cuny =</span> <span class="fu">str_detect</span>(institution_name, <span class="st">"CUNY"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="task-3-identify-uc-and-cal-state-schools" class="level3">
 <h3 class="anchored" data-anchor-id="task-3-identify-uc-and-cal-state-schools">Task 3: Identify UC and CAl State Schools</h3>
-<pre><code>IPEDS &lt;- IPEDS |&gt;
-  mutate(is_calpublic = str_detect(institution_name,"University of California") |
-           str_detect(institution_name,"California State University"))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">is_calpublic =</span> <span class="fu">str_detect</span>(institution_name,<span class="st">"University of California"</span>) <span class="sc">|</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(institution_name,<span class="st">"California State University"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="task-4-intial-eda-pass" class="level3">
 <h3 class="anchored" data-anchor-id="task-4-intial-eda-pass">Task 4 Intial EDA Pass</h3>
-<pre><code>glimpse(IPEDS)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(IPEDS)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 219,316
+Columns: 25
+$ institution_id    &lt;dbl&gt; 100654, 100654, 100654, 100663, 100663, 100663, 1006…
+$ year              &lt;int&gt; 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010…
+$ level             &lt;chr&gt; "all graduate", "all undergrad", "first year undergr…
+$ enrollment_m_aian &lt;dbl&gt; 2, 2, 0, 5, 13, 0, 0, 0, 0, 10, 47, 1, 1, 2, 0, 10, …
+$ enrollment_f_aian &lt;dbl&gt; 0, 1, 0, 16, 22, 3, 0, 0, 0, 10, 36, 5, 0, 0, 0, 18,…
+$ enrollment_m_asia &lt;dbl&gt; 4, 2, 0, 114, 210, 54, 0, 0, 0, 28, 98, 13, 1, 0, 0,…
+$ enrollment_f_asia &lt;dbl&gt; 8, 7, 1, 191, 245, 55, 1, 3, 0, 24, 105, 16, 7, 1, 0…
+$ enrollment_m_bkaa &lt;dbl&gt; 199, 2250, 527, 182, 889, 147, 59, 42, 0, 47, 323, 4…
+$ enrollment_f_bkaa &lt;dbl&gt; 430, 2498, 555, 669, 2016, 260, 94, 85, 0, 72, 565, …
+$ enrollment_m_hisp &lt;dbl&gt; 0, 9, 3, 37, 79, 14, 4, 9, 0, 10, 76, 10, 2, 7, 2, 5…
+$ enrollment_f_hisp &lt;dbl&gt; 2, 7, 1, 82, 141, 14, 2, 3, 0, 6, 77, 14, 3, 12, 4, …
+$ enrollment_m_nhpi &lt;dbl&gt; 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 7, 5…
+$ enrollment_f_nhpi &lt;dbl&gt; 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 3, 3…
+$ enrollment_m_whit &lt;dbl&gt; 47, 59, 7, 1713, 3081, 455, 90, 81, 3, 729, 2431, 27…
+$ enrollment_f_whit &lt;dbl&gt; 125, 42, 9, 2886, 3601, 490, 67, 46, 1, 437, 1856, 1…
+$ enrollment_m_2mor &lt;dbl&gt; 0, 0, 0, 16, 54, 18, 0, 0, 0, 1, 49, 3, 0, 1, 1, 19,…
+$ enrollment_f_2mor &lt;dbl&gt; 0, 0, 0, 30, 75, 34, 0, 0, 0, 4, 40, 10, 0, 1, 0, 33…
+$ enrollment_m_unkn &lt;dbl&gt; 0, 10, 9, 64, 179, 5, 23, 40, 0, 23, 47, 5, 1, 54, 3…
+$ enrollment_f_unkn &lt;dbl&gt; 4, 10, 7, 92, 206, 7, 39, 61, 0, 10, 63, 7, 3, 71, 4…
+$ enrollment_m_nral &lt;dbl&gt; 37, 23, 2, 242, 99, 5, 0, 0, 0, 134, 120, 12, 4, 12,…
+$ enrollment_f_nral &lt;dbl&gt; 16, 20, 2, 176, 110, 8, 0, 0, 0, 64, 71, 1, 11, 13, …
+$ institution_name  &lt;chr&gt; "Alabama A &amp; M University", "Alabama A &amp; M Universit…
+$ state             &lt;chr&gt; "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL"…
+$ is_cuny           &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…
+$ is_calpublic      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…</code></pre>
+</div>
+</div>
 <p>Glimpse shows the type of data each column has. Year data are all int. Level, state, institution_name are chr. Is_cuny and is_calpublic are lgl. And the rest are dbl.</p>
-<pre><code>summary(IPEDS)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(IPEDS)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> institution_id        year         level           enrollment_m_aian 
+ Min.   :100654   Min.   :2010   Length:219316      Min.   :   0.000  
+ 1st Qu.:167039   1st Qu.:2013   Class :character   1st Qu.:   0.000  
+ Median :216597   Median :2016   Mode  :character   Median :   0.000  
+ Mean   :274222   Mean   :2017                      Mean   :   4.521  
+ 3rd Qu.:438586   3rd Qu.:2020                      3rd Qu.:   2.000  
+ Max.   :500555   Max.   :2024                      Max.   :1498.000  
+ enrollment_f_aian  enrollment_m_asia enrollment_f_asia enrollment_m_bkaa 
+ Min.   :   0.000   Min.   :   0.00   Min.   :   0.00   Min.   :    0.00  
+ 1st Qu.:   0.000   1st Qu.:   0.00   1st Qu.:   0.00   1st Qu.:    1.00  
+ Median :   0.000   Median :   1.00   Median :   2.00   Median :    9.00  
+ Mean   :   6.889   Mean   :  45.47   Mean   :  52.39   Mean   :   75.73  
+ 3rd Qu.:   3.000   3rd Qu.:  11.00   3rd Qu.:  16.00   3rd Qu.:   49.00  
+ Max.   :1719.000   Max.   :6541.00   Max.   :6378.00   Max.   :10401.00  
+ enrollment_f_bkaa enrollment_m_hisp enrollment_f_hisp enrollment_m_nhpi 
+ Min.   :    0.0   Min.   :    0.0   Min.   :    0.0   Min.   :   0.000  
+ 1st Qu.:    2.0   1st Qu.:    1.0   1st Qu.:    2.0   1st Qu.:   0.000  
+ Median :   15.0   Median :    7.0   Median :   14.0   Median :   0.000  
+ Mean   :  128.6   Mean   :  120.3   Mean   :  170.7   Mean   :   2.112  
+ 3rd Qu.:   71.0   3rd Qu.:   48.0   3rd Qu.:   74.0   3rd Qu.:   1.000  
+ Max.   :36035.0   Max.   :19464.0   Max.   :27342.0   Max.   :1354.000  
+ enrollment_f_nhpi  enrollment_m_whit enrollment_f_whit enrollment_m_2mor
+ Min.   :   0.000   Min.   :    0.0   Min.   :    0.0   Min.   :   0.00  
+ 1st Qu.:   0.000   1st Qu.:    2.0   1st Qu.:   10.0   1st Qu.:   0.00  
+ Median :   0.000   Median :   33.0   Median :   59.0   Median :   1.00  
+ Mean   :   2.721   Mean   :  351.7   Mean   :  450.9   Mean   :  21.76  
+ 3rd Qu.:   1.000   3rd Qu.:  237.0   3rd Qu.:  314.0   3rd Qu.:  12.00  
+ Max.   :1556.000   Max.   :34014.0   Max.   :74462.0   Max.   :5000.00  
+ enrollment_f_2mor  enrollment_m_unkn  enrollment_f_unkn enrollment_m_nral
+ Min.   :    0.00   Min.   :    0.00   Min.   :    0     Min.   :   0.0   
+ 1st Qu.:    0.00   1st Qu.:    0.00   1st Qu.:    0     1st Qu.:   0.0   
+ Median :    2.00   Median :    1.00   Median :    2     Median :   0.0   
+ Mean   :   30.17   Mean   :   36.47   Mean   :   46     Mean   :  37.4   
+ 3rd Qu.:   17.00   3rd Qu.:   16.00   3rd Qu.:   22     3rd Qu.:   8.0   
+ Max.   :12146.00   Max.   :25579.00   Max.   :52081     Max.   :8181.0   
+ enrollment_f_nral institution_name      state            is_cuny       
+ Min.   :   0.00   Length:219316      Length:219316      Mode :logical  
+ 1st Qu.:   0.00   Class :character   Class :character   FALSE:218606   
+ Median :   0.00   Mode  :character   Mode  :character   TRUE :710      
+ Mean   :  31.24                                                        
+ 3rd Qu.:   7.00                                                        
+ Max.   :6339.00                                                        
+ is_calpublic   
+ Mode :logical  
+ FALSE:218126   
+ TRUE :1190     
+                
+                
+                </code></pre>
+</div>
+</div>
 <p>Summmary shows the min, median, max, and quartiles of numeric data. It shows the length of character data and the number of true/false for logic data.</p>
 </section>
 <section id="task-5-exploratory-questions" class="level3">
 <h3 class="anchored" data-anchor-id="task-5-exploratory-questions">Task 5 Exploratory Questions</h3>
-<pre><code>IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_aian = enrollment_m_aian + enrollment_f_aian)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_asia = enrollment_m_asia + enrollment_f_asia)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_bkaa = enrollment_m_bkaa + enrollment_f_bkaa)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_hisp = enrollment_m_hisp + enrollment_f_hisp)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_nhpi = enrollment_m_nhpi + enrollment_f_nhpi)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_whit = enrollment_m_whit + enrollment_f_whit)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_2mor = enrollment_m_2mor + enrollment_f_2mor)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_unkn = enrollment_m_unkn + enrollment_f_unkn)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(enrollment_nral = enrollment_m_nral + enrollment_f_nral)
-
-IPEDS &lt;- IPEDS |&gt;
-  mutate(total_enrollment = enrollment_aian + enrollment_asia + enrollment_bkaa + enrollment_hisp + enrollment_nhpi + enrollment_whit + enrollment_2mor + enrollment_unkn + enrollment_nral)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_aian =</span> enrollment_m_aian <span class="sc">+</span> enrollment_f_aian)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_asia =</span> enrollment_m_asia <span class="sc">+</span> enrollment_f_asia)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_bkaa =</span> enrollment_m_bkaa <span class="sc">+</span> enrollment_f_bkaa)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_hisp =</span> enrollment_m_hisp <span class="sc">+</span> enrollment_f_hisp)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_nhpi =</span> enrollment_m_nhpi <span class="sc">+</span> enrollment_f_nhpi)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_whit =</span> enrollment_m_whit <span class="sc">+</span> enrollment_f_whit)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_2mor =</span> enrollment_m_2mor <span class="sc">+</span> enrollment_f_2mor)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_unkn =</span> enrollment_m_unkn <span class="sc">+</span> enrollment_f_unkn)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">enrollment_nral =</span> enrollment_m_nral <span class="sc">+</span> enrollment_f_nral)</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_enrollment =</span> enrollment_aian <span class="sc">+</span> enrollment_asia <span class="sc">+</span> enrollment_bkaa <span class="sc">+</span> enrollment_hisp <span class="sc">+</span> enrollment_nhpi <span class="sc">+</span> enrollment_whit <span class="sc">+</span> enrollment_2mor <span class="sc">+</span> enrollment_unkn <span class="sc">+</span> enrollment_nral)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 </section>
 <section id="how-many-distinct-institutions-appear-in-this-data-set" class="level3">
 <h3 class="anchored" data-anchor-id="how-many-distinct-institutions-appear-in-this-data-set">1 How many distinct institutions appear in this data set?</h3>
 <p>Answer: 11243</p>
-<pre><code>IPEDS |&gt;
-  distinct(institution_name)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(institution_name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11,243 × 1
+   institution_name                   
+   &lt;chr&gt;                              
+ 1 Alabama A &amp; M University           
+ 2 University of Alabama at Birmingham
+ 3 Amridge University                 
+ 4 University of Alabama at Huntsville
+ 5 Alabama State University           
+ 6 The University of Alabama          
+ 7 Central Alabama Community College  
+ 8 Athens State University            
+ 9 Auburn University at Montgomery    
+10 Auburn University                  
+# ℹ 11,233 more rows</code></pre>
+</div>
+</div>
 </section>
 <section id="how-many-graduate-students-were-enrolled-at-baruch-in-2024" class="level3">
 <h3 class="anchored" data-anchor-id="how-many-graduate-students-were-enrolled-at-baruch-in-2024">2 How many graduate students were enrolled at Baruch in 2024?</h3>
 <p>Answer: 3585</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Baruch") &amp; 
-           str_detect(level, "graduate") &amp;
-           year == 2024) |&gt;
-  summarize(total_enrollment)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Baruch"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(level, <span class="st">"graduate"</span>) <span class="sc">&amp;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>           year <span class="sc">==</span> <span class="dv">2024</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(total_enrollment)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  total_enrollment
+             &lt;dbl&gt;
+1             3585</code></pre>
+</div>
+</div>
 </section>
 <section id="how-many-total-students-were-enrolled-at-baruch-in-2024" class="level3">
 <h3 class="anchored" data-anchor-id="how-many-total-students-were-enrolled-at-baruch-in-2024">3 How many total students were enrolled at Baruch in 2024?</h3>
 <p>Answer: 20081</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Baruch") &amp;
-        !str_detect(level, "first year") &amp;
-           year == 2024) |&gt;
-  select(total_enrollment)
-
-3585 + 16496</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Baruch"</span>) <span class="sc">&amp;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>        <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>) <span class="sc">&amp;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>           year <span class="sc">==</span> <span class="dv">2024</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(total_enrollment)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 1
+  total_enrollment
+             &lt;dbl&gt;
+1             3585
+2            16496</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dv">3585</span> <span class="sc">+</span> <span class="dv">16496</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20081</code></pre>
+</div>
+</div>
 </section>
 <section id="which-institution-had-the-highest-number-of-enrolled-female-students-in-2019" class="level3">
 <h3 class="anchored" data-anchor-id="which-institution-had-the-highest-number-of-enrolled-female-students-in-2019">4 Which institution had the highest number of enrolled female students in 2019?</h3>
 <p>Answer: Western Governors University 62737</p>
-<pre><code>IPEDS |&gt;
-    filter(year == 2019) |&gt;
-    mutate(total_f_enrollment = enrollment_f_aian + enrollment_f_asia+ enrollment_f_bkaa + enrollment_f_hisp + enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn + enrollment_f_nral) |&gt;
-    select(institution_name, total_f_enrollment) |&gt;
-    slice_max(total_f_enrollment, n = 5)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2019</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_f_enrollment =</span> enrollment_f_aian <span class="sc">+</span> enrollment_f_asia<span class="sc">+</span> enrollment_f_bkaa <span class="sc">+</span> enrollment_f_hisp <span class="sc">+</span> enrollment_f_nhpi <span class="sc">+</span> enrollment_f_whit <span class="sc">+</span> enrollment_f_2mor <span class="sc">+</span> enrollment_f_unkn <span class="sc">+</span> enrollment_f_nral) <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(institution_name, total_f_enrollment) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_max</span>(total_f_enrollment, <span class="at">n =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  institution_name                  total_f_enrollment
+  &lt;chr&gt;                                          &lt;dbl&gt;
+1 Western Governors University                   62737
+2 Southern New Hampshire University              59630
+3 University of Phoenix-Arizona                  49908
+4 Lone Star College System                       44299
+5 Ivy Tech Community College                     42039</code></pre>
+</div>
+</div>
 </section>
 <section id="which-institution-with-over-1000-total-students-admitted-the-highest-proportion-of-native-hawaiian-or-pacific-islander-nhpi-first-year-undergraduates-in-2024" class="level3">
 <h3 class="anchored" data-anchor-id="which-institution-with-over-1000-total-students-admitted-the-highest-proportion-of-native-hawaiian-or-pacific-islander-nhpi-first-year-undergraduates-in-2024">5 Which institution with over 1000 total students admitted the highest proportion of Native Hawaiian or Pacific Islander (nhpi) first-year undergraduates in 2024?</h3>
@@ -347,19 +607,34 @@ IPEDS &lt;- IPEDS |&gt;
 <section id="report-at-least-both-the-institution-and-the-fraction-of-relevant-students." class="level3">
 <h3 class="anchored" data-anchor-id="report-at-least-both-the-institution-and-the-fraction-of-relevant-students.">Report at least both the institution and the fraction of relevant students.</h3>
 <p>Answer: Northeast Technology Center, 20.8%</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(level, "first year") &amp;
-           year == 2024) |&gt;
-  group_by(institution_name) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    enrollment_aian = sum(enrollment_aian, na.rm = TRUE)
-  ) |&gt;
-  mutate(
-    pct_aian = enrollment_aian / total_enrollment
-  )|&gt;
-  filter(total_enrollment &gt; 1000) |&gt;
-  slice_max(pct_aian,n=5)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(level, <span class="st">"first year"</span>) <span class="sc">&amp;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>           year <span class="sc">==</span> <span class="dv">2024</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(institution_name) <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">enrollment_aian =</span> <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_aian =</span> enrollment_aian <span class="sc">/</span> total_enrollment</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">|&gt;</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_enrollment <span class="sc">&gt;</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_aian,<span class="at">n=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  institution_name                     total_enrollment enrollment_aian pct_aian
+  &lt;chr&gt;                                           &lt;dbl&gt;           &lt;dbl&gt;    &lt;dbl&gt;
+1 Northeast Technology Center                      1334             278   0.208 
+2 University of Alaska Anchorage                   1424             102   0.0716
+3 Central New Mexico Community College             3227             183   0.0567
+4 Tulsa Community College                          3584             199   0.0555
+5 Oklahoma State University-Main Camp…             5030             244   0.0485</code></pre>
+</div>
+</div>
 </section>
 <section id="task-6-exploratory-questions" class="level3">
 <h3 class="anchored" data-anchor-id="task-6-exploratory-questions">Task 6 Exploratory Questions</h3>
@@ -367,12 +642,27 @@ IPEDS &lt;- IPEDS |&gt;
 <section id="which-5-states-had-the-highest-number-of-graduate-students-across-all-institutions-located-in-that-state" class="level3">
 <h3 class="anchored" data-anchor-id="which-5-states-had-the-highest-number-of-graduate-students-across-all-institutions-located-in-that-state">1 Which 5 states had the highest number of graduate students across all institutions located in that state?</h3>
 <p>Answer: CA, TX, NY, FL, IL</p>
-<pre><code>IPEDS |&gt;
-  group_by(state) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE)
-  ) |&gt;
-  slice_max(total_enrollment, n=5)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(total_enrollment, <span class="at">n=</span><span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  state total_enrollment
+  &lt;chr&gt;            &lt;dbl&gt;
+1 CA            46909287
+2 TX            28103799
+3 NY            21949532
+4 FL            19629858
+5 IL            13352710</code></pre>
+</div>
+</div>
 </section>
 <section id="in-2024-how-many-first-year-undergraduate-students-were-enrolled-at-cuny-colleges-and-which-colleges-did-they-attend-report-both-absolute-enrollment-numbers-and-percent-of-total-first-year-undergraduates" class="level3">
 <h3 class="anchored" data-anchor-id="in-2024-how-many-first-year-undergraduate-students-were-enrolled-at-cuny-colleges-and-which-colleges-did-they-attend-report-both-absolute-enrollment-numbers-and-percent-of-total-first-year-undergraduates">2 In 2024, how many first year undergraduate students were enrolled at CUNY colleges and which colleges did they attend? Report both absolute enrollment numbers and percent of total first-year undergraduates?</h3>
@@ -380,42 +670,1208 @@ IPEDS &lt;- IPEDS |&gt;
 </section>
 <section id="section" class="level1">
 <h1></h1>
-<pre><code>IPEDS |&gt;
-  filter(year == 2024 &amp;
-        is_cuny == TRUE)|&gt;
-  group_by(institution_name) |&gt;
-   summarize(
-    first_year_enrollment = sum(
-      total_enrollment[str_detect(level, "first year")],
-      na.rm = TRUE
-    ),
-    total_enrollment = sum(total_enrollment, na.rm = TRUE)
-  ) |&gt;
-  mutate(
-    percent_first_year = first_year_enrollment / total_enrollment * 100
-  ) |&gt;
-  gt()</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2024</span> <span class="sc">&amp;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        is_cuny <span class="sc">==</span> <span class="cn">TRUE</span>)<span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(institution_name) <span class="sc">|&gt;</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">summarize</span>(</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">first_year_enrollment =</span> <span class="fu">sum</span>(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>      total_enrollment[<span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)],</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_first_year =</span> first_year_enrollment <span class="sc">/</span> total_enrollment <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="ckeqvhdspd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ckeqvhdspd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ckeqvhdspd thead, #ckeqvhdspd tbody, #ckeqvhdspd tfoot, #ckeqvhdspd tr, #ckeqvhdspd td, #ckeqvhdspd th {
+  border-style: none;
+}
+
+#ckeqvhdspd p {
+  margin: 0;
+  padding: 0;
+}
+
+#ckeqvhdspd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ckeqvhdspd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ckeqvhdspd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ckeqvhdspd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ckeqvhdspd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ckeqvhdspd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ckeqvhdspd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ckeqvhdspd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ckeqvhdspd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ckeqvhdspd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ckeqvhdspd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ckeqvhdspd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ckeqvhdspd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ckeqvhdspd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ckeqvhdspd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckeqvhdspd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ckeqvhdspd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ckeqvhdspd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ckeqvhdspd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckeqvhdspd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ckeqvhdspd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckeqvhdspd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ckeqvhdspd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckeqvhdspd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckeqvhdspd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckeqvhdspd .gt_left {
+  text-align: left;
+}
+
+#ckeqvhdspd .gt_center {
+  text-align: center;
+}
+
+#ckeqvhdspd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ckeqvhdspd .gt_font_normal {
+  font-weight: normal;
+}
+
+#ckeqvhdspd .gt_font_bold {
+  font-weight: bold;
+}
+
+#ckeqvhdspd .gt_font_italic {
+  font-style: italic;
+}
+
+#ckeqvhdspd .gt_super {
+  font-size: 65%;
+}
+
+#ckeqvhdspd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ckeqvhdspd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ckeqvhdspd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ckeqvhdspd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ckeqvhdspd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ckeqvhdspd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ckeqvhdspd .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ckeqvhdspd .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ckeqvhdspd div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="institution_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">institution_name</th>
+<th id="first_year_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">first_year_enrollment</th>
+<th id="total_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">total_enrollment</th>
+<th id="percent_first_year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">percent_first_year</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Bernard M Baruch College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2532</td>
+<td class="gt_row gt_right" headers="total_enrollment">22613</td>
+<td class="gt_row gt_right" headers="percent_first_year">11.1970990</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Borough of Manhattan Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">4718</td>
+<td class="gt_row gt_right" headers="total_enrollment">24841</td>
+<td class="gt_row gt_right" headers="percent_first_year">18.9927942</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Bronx Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1252</td>
+<td class="gt_row gt_right" headers="total_enrollment">8039</td>
+<td class="gt_row gt_right" headers="percent_first_year">15.5740764</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Brooklyn College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1782</td>
+<td class="gt_row gt_right" headers="total_enrollment">16172</td>
+<td class="gt_row gt_right" headers="percent_first_year">11.0190453</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY City College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2543</td>
+<td class="gt_row gt_right" headers="total_enrollment">18087</td>
+<td class="gt_row gt_right" headers="percent_first_year">14.0598220</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Graduate School and University Center</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">12</td>
+<td class="gt_row gt_right" headers="total_enrollment">9548</td>
+<td class="gt_row gt_right" headers="percent_first_year">0.1256808</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Hostos Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">844</td>
+<td class="gt_row gt_right" headers="total_enrollment">6322</td>
+<td class="gt_row gt_right" headers="percent_first_year">13.3502056</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Hunter College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2897</td>
+<td class="gt_row gt_right" headers="total_enrollment">25435</td>
+<td class="gt_row gt_right" headers="percent_first_year">11.3898172</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY John Jay College of Criminal Justice</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2128</td>
+<td class="gt_row gt_right" headers="total_enrollment">15891</td>
+<td class="gt_row gt_right" headers="percent_first_year">13.3912277</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Kingsborough Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1615</td>
+<td class="gt_row gt_right" headers="total_enrollment">19780</td>
+<td class="gt_row gt_right" headers="percent_first_year">8.1648129</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY LaGuardia Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2406</td>
+<td class="gt_row gt_right" headers="total_enrollment">16900</td>
+<td class="gt_row gt_right" headers="percent_first_year">14.2366864</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Lehman College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1545</td>
+<td class="gt_row gt_right" headers="total_enrollment">14869</td>
+<td class="gt_row gt_right" headers="percent_first_year">10.3907458</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Medgar Evers College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">586</td>
+<td class="gt_row gt_right" headers="total_enrollment">4322</td>
+<td class="gt_row gt_right" headers="percent_first_year">13.5585377</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY New York City College of Technology</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">3585</td>
+<td class="gt_row gt_right" headers="total_enrollment">18071</td>
+<td class="gt_row gt_right" headers="percent_first_year">19.8384151</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Queens College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1751</td>
+<td class="gt_row gt_right" headers="total_enrollment">17716</td>
+<td class="gt_row gt_right" headers="percent_first_year">9.8837209</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Queensborough Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">1965</td>
+<td class="gt_row gt_right" headers="total_enrollment">12302</td>
+<td class="gt_row gt_right" headers="percent_first_year">15.9730125</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY School of Law</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">0</td>
+<td class="gt_row gt_right" headers="total_enrollment">669</td>
+<td class="gt_row gt_right" headers="percent_first_year">0.0000000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Stella and Charles Guttman Community College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">367</td>
+<td class="gt_row gt_right" headers="total_enrollment">1415</td>
+<td class="gt_row gt_right" headers="percent_first_year">25.9363958</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY York College</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">766</td>
+<td class="gt_row gt_right" headers="total_enrollment">6940</td>
+<td class="gt_row gt_right" headers="percent_first_year">11.0374640</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">College of Staten Island CUNY</td>
+<td class="gt_row gt_right" headers="first_year_enrollment">2196</td>
+<td class="gt_row gt_right" headers="total_enrollment">13229</td>
+<td class="gt_row gt_right" headers="percent_first_year">16.5998942</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 <section id="how-has-baruchs-total-undergraduate-enrollment-changed-over-the-study-period-report-both-enrollment-numbers-and-percent-change-year-over-year." class="level3">
 <h3 class="anchored" data-anchor-id="how-has-baruchs-total-undergraduate-enrollment-changed-over-the-study-period-report-both-enrollment-numbers-and-percent-change-year-over-year.">3 How has Baruch’s total undergraduate enrollment changed over the study period? Report both enrollment numbers and percent change year-over-year.</h3>
-<pre><code>library(gt)
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Baruch_enrollment <span class="ot">&lt;-</span> IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Baruch"</span>), year <span class="sc">&gt;=</span> <span class="dv">2010</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prev_enrollment =</span> <span class="fu">lag</span>(total_enrollment),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">change =</span> total_enrollment <span class="sc">-</span> prev_enrollment,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_change =</span> (change <span class="sc">/</span> prev_enrollment) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>Baruch_enrollment <span class="sc">|&gt;</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(total_enrollment, prev_enrollment, change), <span class="at">decimals =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> percent_change, <span class="at">decimals =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="gmocktjkwk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gmocktjkwk table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-Baruch_enrollment &lt;- IPEDS |&gt;
-  filter(str_detect(institution_name, "Baruch"), year &gt;= 2010) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE)
-  ) |&gt;
-  arrange(year) |&gt;
-  mutate(
-    prev_enrollment = lag(total_enrollment),
-    change = total_enrollment - prev_enrollment,
-    percent_change = (change / prev_enrollment) * 100
-  )
+#gmocktjkwk thead, #gmocktjkwk tbody, #gmocktjkwk tfoot, #gmocktjkwk tr, #gmocktjkwk td, #gmocktjkwk th {
+  border-style: none;
+}
 
-Baruch_enrollment |&gt;
-  gt() |&gt;
-  fmt_number(columns = c(total_enrollment, prev_enrollment, change), decimals = 0) |&gt;
-  fmt_number(columns = percent_change, decimals = 2)</code></pre>
+#gmocktjkwk p {
+  margin: 0;
+  padding: 0;
+}
+
+#gmocktjkwk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gmocktjkwk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gmocktjkwk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gmocktjkwk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gmocktjkwk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gmocktjkwk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gmocktjkwk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gmocktjkwk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gmocktjkwk .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gmocktjkwk .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gmocktjkwk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gmocktjkwk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gmocktjkwk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gmocktjkwk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gmocktjkwk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gmocktjkwk .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gmocktjkwk .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gmocktjkwk .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gmocktjkwk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gmocktjkwk .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gmocktjkwk .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gmocktjkwk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gmocktjkwk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gmocktjkwk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gmocktjkwk .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gmocktjkwk .gt_left {
+  text-align: left;
+}
+
+#gmocktjkwk .gt_center {
+  text-align: center;
+}
+
+#gmocktjkwk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gmocktjkwk .gt_font_normal {
+  font-weight: normal;
+}
+
+#gmocktjkwk .gt_font_bold {
+  font-weight: bold;
+}
+
+#gmocktjkwk .gt_font_italic {
+  font-style: italic;
+}
+
+#gmocktjkwk .gt_super {
+  font-size: 65%;
+}
+
+#gmocktjkwk .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gmocktjkwk .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gmocktjkwk .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gmocktjkwk .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gmocktjkwk .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gmocktjkwk .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gmocktjkwk .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gmocktjkwk .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gmocktjkwk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">year</th>
+<th id="total_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">total_enrollment</th>
+<th id="prev_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">prev_enrollment</th>
+<th id="change" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">change</th>
+<th id="percent_change" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">percent_change</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_right" headers="total_enrollment">18,323</td>
+<td class="gt_row gt_right" headers="prev_enrollment">NA</td>
+<td class="gt_row gt_right" headers="change">NA</td>
+<td class="gt_row gt_right" headers="percent_change">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,366</td>
+<td class="gt_row gt_right" headers="prev_enrollment">18,323</td>
+<td class="gt_row gt_right" headers="change">1,043</td>
+<td class="gt_row gt_right" headers="percent_change">5.69</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_right" headers="total_enrollment">18,558</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,366</td>
+<td class="gt_row gt_right" headers="change">−808</td>
+<td class="gt_row gt_right" headers="percent_change">−4.17</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_right" headers="total_enrollment">18,759</td>
+<td class="gt_row gt_right" headers="prev_enrollment">18,558</td>
+<td class="gt_row gt_right" headers="change">201</td>
+<td class="gt_row gt_right" headers="percent_change">1.08</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,372</td>
+<td class="gt_row gt_right" headers="prev_enrollment">18,759</td>
+<td class="gt_row gt_right" headers="change">613</td>
+<td class="gt_row gt_right" headers="percent_change">3.27</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,910</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,372</td>
+<td class="gt_row gt_right" headers="change">538</td>
+<td class="gt_row gt_right" headers="percent_change">2.78</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,690</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,910</td>
+<td class="gt_row gt_right" headers="change">−220</td>
+<td class="gt_row gt_right" headers="percent_change">−1.10</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,894</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,690</td>
+<td class="gt_row gt_right" headers="change">204</td>
+<td class="gt_row gt_right" headers="percent_change">1.04</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_right" headers="total_enrollment">19,721</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,894</td>
+<td class="gt_row gt_right" headers="change">−173</td>
+<td class="gt_row gt_right" headers="percent_change">−0.87</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_right" headers="total_enrollment">20,947</td>
+<td class="gt_row gt_right" headers="prev_enrollment">19,721</td>
+<td class="gt_row gt_right" headers="change">1,226</td>
+<td class="gt_row gt_right" headers="percent_change">6.22</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_right" headers="total_enrollment">21,795</td>
+<td class="gt_row gt_right" headers="prev_enrollment">20,947</td>
+<td class="gt_row gt_right" headers="change">848</td>
+<td class="gt_row gt_right" headers="percent_change">4.05</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_right" headers="total_enrollment">22,501</td>
+<td class="gt_row gt_right" headers="prev_enrollment">21,795</td>
+<td class="gt_row gt_right" headers="change">706</td>
+<td class="gt_row gt_right" headers="percent_change">3.24</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_right" headers="total_enrollment">22,441</td>
+<td class="gt_row gt_right" headers="prev_enrollment">22,501</td>
+<td class="gt_row gt_right" headers="change">−60</td>
+<td class="gt_row gt_right" headers="percent_change">−0.27</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_right" headers="total_enrollment">22,312</td>
+<td class="gt_row gt_right" headers="prev_enrollment">22,441</td>
+<td class="gt_row gt_right" headers="change">−129</td>
+<td class="gt_row gt_right" headers="percent_change">−0.57</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_right" headers="total_enrollment">22,613</td>
+<td class="gt_row gt_right" headers="prev_enrollment">22,312</td>
+<td class="gt_row gt_right" headers="change">301</td>
+<td class="gt_row gt_right" headers="percent_change">1.35</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 <section id="at-what-5-institutions-did-the-fraction-of-white-students-decrease-the-most-over-the-period-from-2010-to-2020" class="level3">
 <h3 class="anchored" data-anchor-id="at-what-5-institutions-did-the-fraction-of-white-students-decrease-the-most-over-the-period-from-2010-to-2020">4 At what 5 institutions did the fraction of white students decrease the most over the period from 2010 to 2020?</h3>
@@ -426,220 +1882,1073 @@ Baruch_enrollment |&gt;
 <li>Robert Paul Academy of Cosmetology</li>
 <li>Vista College</li>
 </ul>
-<pre><code>IPEDS |&gt;
-  filter(year %in% c(2010, 2020)) |&gt;
-  group_by(institution_name, year) |&gt;
-  summarize(
-    total_students = sum(total_enrollment, na.rm = TRUE),
-    white_students = sum(enrollment_whit, na.rm = TRUE)
-  ) |&gt;
-  mutate(fraction_white = white_students / total_students) |&gt;
-  select(institution_name, year, fraction_white) |&gt;
-  pivot_wider(
-    names_from = year,
-    values_from = fraction_white,
-    names_prefix = "year_"
-  ) |&gt;
-  filter(!is.na(year_2010) &amp; !is.na(year_2020)) |&gt;
-  mutate(change_fraction_white = year_2020 - year_2010) |&gt;
-  slice_min(order_by = change_fraction_white, n = 5, with_ties = FALSE) |&gt;
-  arrange(change_fraction_white) |&gt;
-  print()</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="dv">2020</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(institution_name, year) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_students =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">white_students =</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fraction_white =</span> white_students <span class="sc">/</span> total_students) <span class="sc">|&gt;</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(institution_name, year, fraction_white) <span class="sc">|&gt;</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> year,</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> fraction_white,</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"year_"</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(year_2010) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(year_2020)) <span class="sc">|&gt;</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change_fraction_white =</span> year_2020 <span class="sc">-</span> year_2010) <span class="sc">|&gt;</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(<span class="at">order_by =</span> change_fraction_white, <span class="at">n =</span> <span class="dv">5</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(change_fraction_white) <span class="sc">|&gt;</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by institution_name and year.
+ℹ Output is grouped by institution_name.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(institution_name, year))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,942 × 4
+# Groups:   institution_name [3,942]
+   institution_name                    year_2010 year_2020 change_fraction_white
+   &lt;chr&gt;                                   &lt;dbl&gt;     &lt;dbl&gt;                 &lt;dbl&gt;
+ 1 University of the Cumberlands           0.856    0.0874                -0.769
+ 2 Detroit Business Institute-Downriv…     0.891    0.148                 -0.743
+ 3 Paul Mitchell the School-Rhode Isl…     0.910    0.275                 -0.635
+ 4 Robert Paul Academy of Cosmetology…     0.872    0.259                 -0.614
+ 5 Vista College                           0.822    0.212                 -0.610
+ 6 Harrisburg University of Science a…     0.689    0.0940                -0.595
+ 7 New England Institute of Technology     0.674    0.0817                -0.592
+ 8 Palm Beach Academy of Health &amp; Bea…     0.668    0.109                 -0.559
+ 9 Chisholm Trail Technology Center        0.728    0.169                 -0.559
+10 Saint Joseph's College of Maine         0.711    0.188                 -0.522
+# ℹ 3,932 more rows</code></pre>
+</div>
+</div>
 </section>
 <section id="in-which-3-states-did-the-fraction-of-female-undergraduates-increase-the-most-over-the-period-from-2010-to-2024" class="level3">
 <h3 class="anchored" data-anchor-id="in-which-3-states-did-the-fraction-of-female-undergraduates-increase-the-most-over-the-period-from-2010-to-2024">5 In which 3 states did the fraction of female undergraduates increase the most over the period from 2010 to 2024?</h3>
 <p>Answer: AS, FM, NH</p>
-<pre><code>IPEDS |&gt;
-  filter(year %in% c(2010, 2024)) |&gt;
-  group_by(state, year) |&gt;
-  summarize(
-    total_students = sum(total_enrollment, na.rm = TRUE),
-    total_f_enrollment = sum(
-      enrollment_f_aian + enrollment_f_asia + enrollment_f_bkaa + enrollment_f_hisp +
-        enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn +
-        enrollment_f_nral,
-      na.rm = TRUE
-    ),
-    .groups = "drop"
-  ) |&gt;
-  mutate(fraction_female = total_f_enrollment / total_students) |&gt;
-  select(state, year, fraction_female) |&gt;
-  pivot_wider(
-    names_from = year,
-    values_from = fraction_female,
-    names_prefix = "year_"
-  ) |&gt;
-  filter(!is.na(year_2010) &amp; !is.na(year_2024)) |&gt;
-  mutate(change_fraction_female = year_2024 - year_2010) |&gt;
-  arrange(desc(change_fraction_female)) |&gt;  # largest increase first
-  slice_head(n = 5) |&gt;
-  print()</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="dv">2024</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, year) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_students =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_f_enrollment =</span> <span class="fu">sum</span>(</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>      enrollment_f_aian <span class="sc">+</span> enrollment_f_asia <span class="sc">+</span> enrollment_f_bkaa <span class="sc">+</span> enrollment_f_hisp <span class="sc">+</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>        enrollment_f_nhpi <span class="sc">+</span> enrollment_f_whit <span class="sc">+</span> enrollment_f_2mor <span class="sc">+</span> enrollment_f_unkn <span class="sc">+</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        enrollment_f_nral,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fraction_female =</span> total_f_enrollment <span class="sc">/</span> total_students) <span class="sc">|&gt;</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(state, year, fraction_female) <span class="sc">|&gt;</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> year,</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> fraction_female,</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"year_"</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(year_2010) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(year_2024)) <span class="sc">|&gt;</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change_fraction_female =</span> year_2024 <span class="sc">-</span> year_2010) <span class="sc">|&gt;</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(change_fraction_female)) <span class="sc">|&gt;</span>  <span class="co"># largest increase first</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  state year_2010 year_2024 change_fraction_female
+  &lt;chr&gt;     &lt;dbl&gt;     &lt;dbl&gt;                  &lt;dbl&gt;
+1 AS        0.603     0.693                 0.0900
+2 FM        0.538     0.627                 0.0881
+3 NH        0.573     0.623                 0.0493
+4 MN        0.590     0.638                 0.0484
+5 UT        0.513     0.557                 0.0437</code></pre>
+</div>
+</div>
 </section>
 <section id="final-insights-and-deliverable" class="level2">
 <h2 class="anchored" data-anchor-id="final-insights-and-deliverable">Final Insights and Deliverable</h2>
 <p>Select a school</p>
-<pre><code>IPEDS |&gt;
-  filter(is_cuny == TRUE) |&gt;
-  distinct(institution_name) |&gt;
-  print(n = 200)</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_cuny <span class="sc">==</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(institution_name) <span class="sc">|&gt;</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 23 × 1
+   institution_name                                 
+   &lt;chr&gt;                                            
+ 1 CUNY Bernard M Baruch College                    
+ 2 CUNY Borough of Manhattan Community College      
+ 3 CUNY Bronx Community College                     
+ 4 CUNY Brooklyn College                            
+ 5 CUNY College of Staten Island                    
+ 6 CUNY City College                                
+ 7 CUNY Graduate School and University Center       
+ 8 CUNY Hostos Community College                    
+ 9 CUNY Hunter College                              
+10 CUNY John Jay College of Criminal Justice        
+11 CUNY Kingsborough Community College              
+12 CUNY LaGuardia Community College                 
+13 CUNY Lehman College                              
+14 CUNY Medgar Evers College                        
+15 CUNY New York City College of Technology         
+16 CUNY Queens College                              
+17 CUNY Queensborough Community College             
+18 CUNY School of Law at Queens College             
+19 CUNY York College                                
+20 New Community College at CUNY (The)              
+21 College of Staten Island CUNY                    
+22 CUNY School of Law                               
+23 CUNY Stella and Charles Guttman Community College</code></pre>
+</div>
+</div>
 <p>Look at enrollment by year</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE) |&gt;
-  group_by(year,institution_name) |&gt;
-  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year,institution_name) <span class="sc">|&gt;</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by year and institution_name.
+ℹ Output is grouped by year.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(year, institution_name))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 3
+# Groups:   year [15]
+    year institution_name              total_enrollment
+   &lt;int&gt; &lt;chr&gt;                                    &lt;dbl&gt;
+ 1  2010 CUNY College of Staten Island            16236
+ 2  2011 CUNY College of Staten Island            16657
+ 3  2012 CUNY College of Staten Island            16877
+ 4  2013 College of Staten Island CUNY            17248
+ 5  2014 College of Staten Island CUNY            16838
+ 6  2015 College of Staten Island CUNY            16272
+ 7  2016 College of Staten Island CUNY            16123
+ 8  2017 College of Staten Island CUNY            16323
+ 9  2018 College of Staten Island CUNY            15910
+10  2019 College of Staten Island CUNY            15143
+11  2020 College of Staten Island CUNY            15313
+12  2021 College of Staten Island CUNY            14034
+13  2022 College of Staten Island CUNY            12159
+14  2023 College of Staten Island CUNY            12963
+15  2024 College of Staten Island CUNY            13229</code></pre>
+</div>
+</div>
 <p>Mean enrollment 2010 -2024</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |&gt;
-  summarize(mean_enrollment = mean(total_enrollment))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_enrollment =</span> <span class="fu">mean</span>(total_enrollment))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mean_enrollment
+            &lt;dbl&gt;
+1          12977.</code></pre>
+</div>
+</div>
 <p>Student makeup (#)</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
-    total_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    )
-  )</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other =</span> (</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+    year total_enrollment total_whitasia total_other
+   &lt;int&gt;            &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+ 1  2010            13894           9959        3935
+ 2  2011            14199          10079        4120
+ 3  2012            14321           9817        4504
+ 4  2013            14441           9341        5100
+ 5  2014            14346           8850        5496
+ 6  2015            13701           8247        5454
+ 7  2016            13520           7740        5780
+ 8  2017            13594           7629        5965
+ 9  2018            13247           7444        5803
+10  2019            12782           7200        5582
+11  2020            12797           7111        5686
+12  2021            11793           6534        5259
+13  2022            10248           5774        4474
+14  2023            10736           6006        4730
+15  2024            11033           6183        4850</code></pre>
+</div>
+</div>
 <p>Student makeup through 2010 - 2024 (%)</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
-    prop_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    ) / total_enrollment
-  )</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> total_enrollment,</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_other =</span> (</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">/</span> total_enrollment</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="plphnrvdqc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#plphnrvdqc table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#plphnrvdqc thead, #plphnrvdqc tbody, #plphnrvdqc tfoot, #plphnrvdqc tr, #plphnrvdqc td, #plphnrvdqc th {
+  border-style: none;
+}
+
+#plphnrvdqc p {
+  margin: 0;
+  padding: 0;
+}
+
+#plphnrvdqc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#plphnrvdqc .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#plphnrvdqc .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#plphnrvdqc .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#plphnrvdqc .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#plphnrvdqc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#plphnrvdqc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#plphnrvdqc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#plphnrvdqc .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#plphnrvdqc .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#plphnrvdqc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#plphnrvdqc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#plphnrvdqc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#plphnrvdqc .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#plphnrvdqc .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plphnrvdqc .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#plphnrvdqc .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#plphnrvdqc .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#plphnrvdqc .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plphnrvdqc .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#plphnrvdqc .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plphnrvdqc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#plphnrvdqc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plphnrvdqc .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plphnrvdqc .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plphnrvdqc .gt_left {
+  text-align: left;
+}
+
+#plphnrvdqc .gt_center {
+  text-align: center;
+}
+
+#plphnrvdqc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#plphnrvdqc .gt_font_normal {
+  font-weight: normal;
+}
+
+#plphnrvdqc .gt_font_bold {
+  font-weight: bold;
+}
+
+#plphnrvdqc .gt_font_italic {
+  font-style: italic;
+}
+
+#plphnrvdqc .gt_super {
+  font-size: 65%;
+}
+
+#plphnrvdqc .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#plphnrvdqc .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#plphnrvdqc .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#plphnrvdqc .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#plphnrvdqc .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#plphnrvdqc .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#plphnrvdqc .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#plphnrvdqc .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#plphnrvdqc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">year</th>
+<th id="total_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">total_enrollment</th>
+<th id="prop_whitasia" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">prop_whitasia</th>
+<th id="prop_other" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">prop_other</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_right" headers="total_enrollment">13894</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.7167842</td>
+<td class="gt_row gt_right" headers="prop_other">0.2832158</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_right" headers="total_enrollment">14199</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.7098387</td>
+<td class="gt_row gt_right" headers="prop_other">0.2901613</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_right" headers="total_enrollment">14321</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.6854968</td>
+<td class="gt_row gt_right" headers="prop_other">0.3145032</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_right" headers="total_enrollment">14441</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.6468389</td>
+<td class="gt_row gt_right" headers="prop_other">0.3531611</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_right" headers="total_enrollment">14346</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.6168967</td>
+<td class="gt_row gt_right" headers="prop_other">0.3831033</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_right" headers="total_enrollment">13701</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.6019269</td>
+<td class="gt_row gt_right" headers="prop_other">0.3980731</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_right" headers="total_enrollment">13520</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5724852</td>
+<td class="gt_row gt_right" headers="prop_other">0.4275148</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_right" headers="total_enrollment">13594</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5612035</td>
+<td class="gt_row gt_right" headers="prop_other">0.4387965</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_right" headers="total_enrollment">13247</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5619386</td>
+<td class="gt_row gt_right" headers="prop_other">0.4380614</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_right" headers="total_enrollment">12782</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5632921</td>
+<td class="gt_row gt_right" headers="prop_other">0.4367079</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_right" headers="total_enrollment">12797</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5556771</td>
+<td class="gt_row gt_right" headers="prop_other">0.4443229</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_right" headers="total_enrollment">11793</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5540575</td>
+<td class="gt_row gt_right" headers="prop_other">0.4459425</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_right" headers="total_enrollment">10248</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5634270</td>
+<td class="gt_row gt_right" headers="prop_other">0.4365730</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_right" headers="total_enrollment">10736</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5594262</td>
+<td class="gt_row gt_right" headers="prop_other">0.4405738</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_right" headers="total_enrollment">11033</td>
+<td class="gt_row gt_right" headers="prop_whitasia">0.5604097</td>
+<td class="gt_row gt_right" headers="prop_other">0.4395903</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 <p>Mean of student proportion</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
-    prop_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    ) / total_enrollment
-  ) |&gt;
-  ungroup() |&gt;
-  summarize(
-    mean_prop_whitasia = mean(prop_whitasia, na.rm = TRUE),
-    mean_prop_other = mean(prop_other, na.rm = TRUE))</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> total_enrollment,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_other =</span> (</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">/</span> total_enrollment</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_prop_whitasia =</span> <span class="fu">mean</span>(prop_whitasia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_prop_other =</span> <span class="fu">mean</span>(prop_other, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  mean_prop_whitasia mean_prop_other
+               &lt;dbl&gt;           &lt;dbl&gt;
+1              0.602           0.398</code></pre>
+</div>
+</div>
 <p>First year enrollment</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "Staten Island") &amp;
-           is_cuny == TRUE &amp;
-           str_detect(level,"first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
-    prop_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    ) / total_enrollment
-  )</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"Staten Island"</span>) <span class="sc">&amp;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>           is_cuny <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(level,<span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> total_enrollment,</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_other =</span> (</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">/</span> total_enrollment</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+    year total_enrollment prop_whitasia prop_other
+   &lt;int&gt;            &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1  2010             2342         0.647      0.353
+ 2  2011             2458         0.627      0.373
+ 3  2012             2556         0.594      0.406
+ 4  2013             2807         0.550      0.450
+ 5  2014             2492         0.538      0.462
+ 6  2015             2571         0.509      0.491
+ 7  2016             2603         0.380      0.620
+ 8  2017             2729         0.465      0.535
+ 9  2018             2663         0.500      0.500
+10  2019             2361         0.456      0.544
+11  2020             2516         0.474      0.526
+12  2021             2241         0.487      0.513
+13  2022             1911         0.509      0.491
+14  2023             2227         0.482      0.518
+15  2024             2196         0.512      0.488</code></pre>
+</div>
+</div>
 <p>California school: California State University-Los Angeles</p>
-<pre><code>IPEDS |&gt;
-  filter(is_calpublic == TRUE) |&gt;
-  group_by(institution_name) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE)
-  ) |&gt;
-  print(n=20)
-</code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_calpublic <span class="sc">==</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(institution_name) <span class="sc">|&gt;</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n=</span><span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 31 × 2
+   institution_name                                          total_enrollment
+   &lt;chr&gt;                                                                &lt;dbl&gt;
+ 1 Bethesda University of California                                     1194
+ 2 California State University Maritime Academy                         10280
+ 3 California State University-Bakersfield                             164976
+ 4 California State University-Channel Islands                         102354
+ 5 California State University-Chico                                   282286
+ 6 California State University-Dominguez Hills                         260116
+ 7 California State University-East Bay                                239031
+ 8 California State University-Fresno                                  408718
+ 9 California State University-Fullerton                               668476
+10 California State University-Long Beach                              638732
+11 California State University-Los Angeles                             429139
+12 California State University-Monterey Bay                            116022
+13 California State University-Northridge                              659542
+14 California State University-Sacramento                              511465
+15 California State University-San Bernardino                          324275
+16 California State University-San Marcos                              240032
+17 California State University-Stanislaus                              165027
+18 Dominican University of California                                   33520
+19 University of California College of the Law-San Francisco             2411
+20 University of California Hastings College of Law                      3752
+# ℹ 11 more rows</code></pre>
+</div>
+</div>
 <p>Enrollment California State University-Los Angeles</p>
-<pre><code>IPEDS |&gt;
-  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
-           str_detect(level,"first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
-    prop_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    ) / total_enrollment
-  )
-
-
-IPEDS |&gt;
-  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    total_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)),
-    total_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    )
-  )
-
-IPEDS |&gt;
-  filter(str_detect(institution_name, "California State University-Los Angeles") &amp;
-           !str_detect(level, "first year")) |&gt;
-  group_by(year) |&gt;
-  summarize(
-    total_enrollment = sum(total_enrollment, na.rm = TRUE),
-    prop_whitasia = (sum(enrollment_asia, na.rm = TRUE) + sum(enrollment_whit, na.rm = TRUE)) / total_enrollment,
-    prop_other = (
-      sum(enrollment_aian, na.rm = TRUE) +
-        sum(enrollment_bkaa, na.rm = TRUE) +
-        sum(enrollment_hisp, na.rm = TRUE) +
-        sum(enrollment_nhpi, na.rm = TRUE) +
-        sum(enrollment_2mor, na.rm = TRUE) +
-        sum(enrollment_unkn, na.rm = TRUE) +
-        sum(enrollment_nral, na.rm = TRUE)
-    ) / total_enrollment
-  ) </code></pre>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"California State University-Los Angeles"</span>) <span class="sc">&amp;</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_detect</span>(level,<span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> total_enrollment,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_other =</span> (</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">/</span> total_enrollment</span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+    year total_enrollment prop_whitasia prop_other
+   &lt;int&gt;            &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1  2010             2061        0.208       0.792
+ 2  2011             2474        0.180       0.820
+ 3  2012             2908        0.181       0.819
+ 4  2013             3021        0.170       0.830
+ 5  2014             3230        0.168       0.832
+ 6  2015             3862        0.150       0.850
+ 7  2016             3830        0.144       0.856
+ 8  2017             3556        0.121       0.879
+ 9  2018             3862        0.128       0.872
+10  2019             3287        0.120       0.880
+11  2020             4000        0.105       0.895
+12  2021             4095        0.142       0.858
+13  2022             3892        0.112       0.888
+14  2023             3614        0.0805      0.919
+15  2024             2814        0.0721      0.928</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"California State University-Los Angeles"</span>) <span class="sc">&amp;</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_other =</span> (</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+    year total_enrollment total_whitasia total_other
+   &lt;int&gt;            &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+ 1  2010            20142           5829       14313
+ 2  2011            21284           6093       15191
+ 3  2012            21755           5836       15919
+ 4  2013            23258           6049       17209
+ 5  2014            24488           5963       18525
+ 6  2015            27680           6427       21253
+ 7  2016            27827           6118       21709
+ 8  2017            28531           5922       22609
+ 9  2018            28036           5481       22555
+10  2019            26671           4987       21684
+11  2020            26745           4609       22136
+12  2021            27513           4687       22826
+13  2022            26460           4475       21985
+14  2023            25080           3850       21230
+15  2024            23163           3474       19689</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>IPEDS <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(institution_name, <span class="st">"California State University-Los Angeles"</span>) <span class="sc">&amp;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span><span class="fu">str_detect</span>(level, <span class="st">"first year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_enrollment =</span> <span class="fu">sum</span>(total_enrollment, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_whitasia =</span> (<span class="fu">sum</span>(enrollment_asia, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">sum</span>(enrollment_whit, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> total_enrollment,</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prop_other =</span> (</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(enrollment_aian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_bkaa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_hisp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nhpi, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_2mor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_unkn, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(enrollment_nral, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">/</span> total_enrollment</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+    year total_enrollment prop_whitasia prop_other
+   &lt;int&gt;            &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1  2010            20142         0.289      0.711
+ 2  2011            21284         0.286      0.714
+ 3  2012            21755         0.268      0.732
+ 4  2013            23258         0.260      0.740
+ 5  2014            24488         0.244      0.756
+ 6  2015            27680         0.232      0.768
+ 7  2016            27827         0.220      0.780
+ 8  2017            28531         0.208      0.792
+ 9  2018            28036         0.195      0.805
+10  2019            26671         0.187      0.813
+11  2020            26745         0.172      0.828
+12  2021            27513         0.170      0.830
+13  2022            26460         0.169      0.831
+14  2023            25080         0.154      0.846
+15  2024            23163         0.150      0.850</code></pre>
+</div>
+</div>
+</section>
+<section id="op-ed" class="level2">
+<h2 class="anchored" data-anchor-id="op-ed">Op-Ed</h2>
+<p>On June 29, 2023, the decision for the case of Students for Fair Admissions v. Harvard (SFFA) was handed down by the Supreme Court. This decision caused a ripple in the process of college admissions, as it has disallowed race to be a factor. As the president of CUNY College of Staten Island, I have been following this matter closely. With the release of the first set of post-SFFA admissions data, I’d like to examine the diversity of the student body at my school and to share the effects of the SFFA decision.</p>
+<p>I would like to first offer some background on the CUNY College of Staten Island and the definition of diversity I will be using and applying to the school’s population. CUNY College of Staten Island is a mid-size CUNY with an average enrollment of around 12977 from 2010 to 2024. With the context of the SFFA case, I will be measuring diversity using the population of non-White and non-Asian American students. I will also be classifying students with two or more races, unknown, unreported, and not a U.S. resident as a non-white and non-Asian American student. For my enrollment rates, from 2010 - 2024, white and Asian American students, on average, make up 60.2% of the enrollment. Non-white and Asian Asian American students, on the other hand, make up 39.8%.</p>
+<p>Starting from 2010, the makeup of the incoming cohorts of first years has been changing. In 2010, white and Asian Americans students made up 64.7% of total first years, while non-white and Asian Americans students only made up 35.3%. This ratio fluctuated throughout the years, and in 2024, white and Asian Americans students made up 51.2% of the total first years. But this 13% decrease is not linear. Upon taking a closer look at the year-by-year comparison of the population, it wildly varies. From 2010-2015, there were 6 years with white and Asian American student populations of less than 50%, and even one year in which it was 38%. This meant that overall, the first-year class has generally been diverse.</p>
+<p>The demographics of the entire student body have a similar trend, where the percentage of white and Asian American students has been decreasing throughout the years. In 2010, white and Asian Americans students made up 71.7% of the total student body, while non-white and Asian Americans students only made up 28.3%. It has been steadily decreasing, with white and Asian Americans students making up 56% of the student body in 2024. However, unlike the first years, this change has been more consistent and gradual. There have been no instances where the white and Asian American population dipped below 50%. The change following the decision was not drastic, with a .01% change in population proportion.</p>
+<p>Although the data from the first years and the overall student body show the proportions of white and Asian Americans students and non-white and Asian Americans students reaching similar proportions, one thing I did not mention earlier was the overall decrease in the population of the student body. From a total enrollment of 13894 in 2010 to an enrollment of 11033 in 2024, the enrollment rate has been shrinking. In 2010, 9959 white and Asian American students enrolled in my school. In 2024, this number shrank by almost 1/3, with the enrollment number being 6183. On the other hand, the enrollment rate of non-white and ASian Americans students has been consistent, with the number being 3935 in 2010 and 4850 in 2024. This begs the question: Is the shifting of the proportions due to the SFFA, or did the proportions shift due to a decrease in enrollment?</p>
+<p>In order to get a good view of the bigger picture, I’ve also decided to select one California public institution to compare against. For this step I selected California State University-Los Angeles. I started with examining the first year cohort which I found extremely different proportions. In 2010 the California institute only had 20.8% of white and Asian Americans students making up their first year cohort. This percentage even went down with the most recent year having only 7.21%. Even when I looked into their overall demographics of the entire student body, the same stands. The white and Asian American students only made up 28.9% of the student body in 2010 and 15% in 2024. The California schools shouldn’t have changed their policies at all, with my changes being less than theirs it may mean that the changes in my school’s data may be just normal fluctuations. Meaning that the changes may be due to the decrease in enrollments, or just changes in student preferences. Despite the proportion of white and Asian American students decreasing, they still make up predominately the population of the student body. The population of the bourough may come into play as the largest ethnic group in Staten Island is White.i believe that further studies should be done taking in such factors.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="AI Usage Statement">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
