@@ -9,6 +9,11 @@ format:
         code-fold: true
 ---
 
+```{r}
+library(dplyr)
+library(gt)
+```
+
 ## Introduction
 
 In this mini-project, I intend to perform an analysis on the first set of post - SFFA admissions data and pre - SFFA admissions data to see if there were any changes following the decision.
@@ -20,7 +25,7 @@ In this mini-project, I intend to perform an analysis on the first set of post -
 Code related to Data Acquisition and Preparation goes here.
 
 
-```
+```{r}
 # Task 1 Data Acquisition
 
 acquire_ipeds_data <- function(start_year=2010, end_year=2024){
@@ -151,14 +156,14 @@ similar elements.
 
 ### Task 2: Identify CUNY Schools
 
-```
+```{r}
 IPEDS <- IPEDS |>
   mutate(is_cuny = str_detect(institution_name, "CUNY"))
 ```
 
 ### Task 3: Identify UC and CAl State Schools
 
-```
+```{r}
 IPEDS <- IPEDS |>
   mutate(is_calpublic = str_detect(institution_name,"University of California") |
            str_detect(institution_name,"California State University"))
@@ -166,13 +171,13 @@ IPEDS <- IPEDS |>
 
 ### Task 4 Intial EDA Pass
 
-```
+```{r}
 glimpse(IPEDS)
 ```
 
 Glimpse shows the type of data each column has. Year data are all int. Level, state, institution_name are chr. Is_cuny and is_calpublic are lgl. And the rest are dbl.
 
-```
+```{r}
 summary(IPEDS)
 ```
 
@@ -180,7 +185,7 @@ Summmary shows the min, median, max, and quartiles of numeric data. It shows the
 
 ### Task 5 Exploratory Questions
 
-```
+```{r}
 IPEDS <- IPEDS |>
   mutate(enrollment_aian = enrollment_m_aian + enrollment_f_aian)
 
@@ -216,7 +221,7 @@ IPEDS <- IPEDS |>
 ### 1 How many distinct institutions appear in this data set?
 Answer: 11243
 
-```
+```{r}
 IPEDS |>
   distinct(institution_name)
 ```
@@ -224,7 +229,7 @@ IPEDS |>
 ### 2 How many graduate students were enrolled at Baruch in 2024?
 Answer: 3585
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Baruch") & 
            str_detect(level, "graduate") &
@@ -235,7 +240,7 @@ IPEDS |>
 ### 3  How many total students were enrolled at Baruch in 2024?
 Answer: 20081
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Baruch") &
         !str_detect(level, "first year") &
@@ -248,7 +253,7 @@ IPEDS |>
 ### 4 Which institution had the highest number of enrolled female students in 2019?
 Answer: Western Governors University 62737
 
-```
+```{r}
 IPEDS |>
     filter(year == 2019) |>
     mutate(total_f_enrollment = enrollment_f_aian + enrollment_f_asia+ enrollment_f_bkaa + enrollment_f_hisp + enrollment_f_nhpi + enrollment_f_whit + enrollment_f_2mor + enrollment_f_unkn + enrollment_f_nral) |>
@@ -260,7 +265,7 @@ IPEDS |>
 ### Report at least both the institution and the fraction of relevant students.
 Answer: Northeast Technology Center, 20.8%
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(level, "first year") &
            year == 2024) |>
@@ -283,7 +288,7 @@ IPEDS |>
 ### 1 Which 5 states had the highest number of graduate students across all institutions located in that state?
 Answer: CA, TX, NY, FL, IL
 
-```
+```{r}
 IPEDS |>
   group_by(state) |>
   summarize(
@@ -295,7 +300,7 @@ IPEDS |>
 ### 2 In 2024, how many first year undergraduate students were enrolled at CUNY colleges and which colleges did they attend? Report both absolute enrollment numbers and percent of total first-year undergraduates?
 # 
 
-```
+```{r}
 IPEDS |>
   filter(year == 2024 &
         is_cuny == TRUE)|>
@@ -315,8 +320,7 @@ IPEDS |>
     
 ### 3 How has Baruch’s total undergraduate enrollment changed over the study period? Report both enrollment numbers and percent change year-over-year.
 
-```
-library(gt)
+```{r}
 
 Baruch_enrollment <- IPEDS |>
   filter(str_detect(institution_name, "Baruch"), year >= 2010) |>
@@ -344,7 +348,7 @@ Baruch_enrollment |>
 * Robert Paul Academy of Cosmetology
 * Vista College
 
-```
+```{r}
 IPEDS |>
   filter(year %in% c(2010, 2020)) |>
   group_by(institution_name, year) |>
@@ -369,7 +373,7 @@ IPEDS |>
 ### 5 In which 3 states did the fraction of female undergraduates increase the most over the period from 2010 to 2024?
 Answer: AS, FM, NH
 
-```
+```{r}
 IPEDS |>
   filter(year %in% c(2010, 2024)) |>
   group_by(state, year) |>
@@ -401,7 +405,7 @@ IPEDS |>
 
 Select a school
 
-```
+```{r}
 IPEDS |>
   filter(is_cuny == TRUE) |>
   distinct(institution_name) |>
@@ -409,7 +413,7 @@ IPEDS |>
 ```
 Look at enrollment by  year
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE) |>
@@ -419,7 +423,7 @@ IPEDS |>
   
 Mean enrollment 2010 -2024
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE &
@@ -431,7 +435,7 @@ IPEDS |>
 
 Student makeup (#)
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE &
@@ -454,7 +458,7 @@ IPEDS |>
 
 Student makeup through 2010 - 2024 (%)
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE &
@@ -472,12 +476,12 @@ IPEDS |>
         sum(enrollment_unkn, na.rm = TRUE) +
         sum(enrollment_nral, na.rm = TRUE)
     ) / total_enrollment
-  )
+  ) |>
 ```
 
 Mean of student proportion
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE &
@@ -504,7 +508,7 @@ IPEDS |>
 
 First year enrollment
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "Staten Island") &
            is_cuny == TRUE &
@@ -527,7 +531,7 @@ IPEDS |>
 
 California school: California State University-Los Angeles
 
-```
+```{r}
 IPEDS |>
   filter(is_calpublic == TRUE) |>
   group_by(institution_name) |>
@@ -540,7 +544,7 @@ IPEDS |>
 
 Enrollment California State University-Los Angeles
 
-```
+```{r}
 IPEDS |>
   filter(str_detect(institution_name, "California State University-Los Angeles") &
            str_detect(level,"first year")) |>
@@ -596,6 +600,25 @@ IPEDS |>
     ) / total_enrollment
   ) 
 ```
+
+## Op-Ed
+
+
+On June 29, 2023, the decision for the case of Students for Fair Admissions v. Harvard (SFFA) was handed down by the Supreme Court. This decision caused a ripple in the process of college admissions, as it has disallowed race to be a factor. As the president of CUNY College of Staten Island, I have been following this matter closely. With the release of the first set of post-SFFA admissions data, I'd like to examine the diversity of the student body at my school and to share the effects of the SFFA decision.
+
+I would like to first offer some background on the CUNY College of Staten Island and the definition of diversity I will be using and applying to the school's population. CUNY College of Staten Island is a mid-size CUNY with an average enrollment of around 12977 from 2010 to 2024. With the context of the SFFA case, I will be measuring diversity using the population of non-White and non-Asian American students. I will also be classifying students with two or more races, unknown, unreported, and not a U.S. resident as a non-white and non-Asian American student. For my enrollment rates, from 2010 - 2024, white and Asian American students, on average, make up 60.2% of the enrollment. Non-white and Asian Asian American students, on the other hand, make up 39.8%. 
+
+Starting from 2010, the makeup of the incoming cohorts of first years has been changing. In 2010, white and Asian Americans students made up 64.7% of total first years, while non-white and Asian Americans students only made up 35.3%. This ratio fluctuated throughout the years, and in 2024, white and Asian Americans students made up 51.2% of the total first years. But this 13% decrease is not linear. Upon taking a closer look at the year-by-year comparison of the population, it wildly varies. From 2010-2015, there were 6 years with white and Asian American student populations of less than 50%, and even one year in which it was 38%. This meant that overall, the first-year class has generally been diverse. 
+
+The demographics of the entire student body have a similar trend, where the percentage of white and Asian American students has been decreasing throughout the years. In 2010, white and Asian Americans students made up 71.7% of the total student body, while non-white and Asian Americans students only made up 28.3%. It has been steadily decreasing, with white and Asian Americans students making up 56% of the student body in 2024. However, unlike the first years, this change has been more consistent and gradual. There have been no instances where the white and Asian American population dipped below 50%. The change following the decision was not drastic, with a .01% change in population proportion. 
+
+Although the data from the first years and the overall student body show the proportions of white and Asian Americans students and non-white and Asian Americans students reaching similar proportions, one thing I did not mention earlier was the overall decrease in the population of the student body. From a total enrollment of 13894 in 2010 to an enrollment of 11033 in 2024, the enrollment rate has been shrinking. In 2010, 9959 white and Asian American students enrolled in my school. In 2024, this number shrank by almost 1/3, with the enrollment number being 6183. On the other hand, the enrollment rate of non-white and ASian Americans students has been consistent, with the number being 3935 in 2010 and 4850 in 2024. This begs the question: Is the shifting of the proportions due to the SFFA, or did the proportions shift due to a decrease in enrollment?
+
+In order to get a good view of the bigger picture, I've also decided to select one California public institution to compare against. For this step I selected California State University-Los Angeles. I started with examining the first year cohort which I found extremely different proportions. In 2010 the California institute only had 20.8% of white and Asian Americans students making up their first year cohort. This percentage even went down with the most recent year having only 7.21%. Even when I looked into their overall demographics of the entire student body, the same stands. The white and Asian American students only made up 28.9% of the student body in 2010 and 15% in 2024. The California schools shouldn't have changed their policies at all, with my changes being less than theirs it may mean that the changes in my school's data may be just normal fluctuations. Meaning that the changes may be due to the decrease in enrollments, or just changes in student preferences. Despite the proportion of white and Asian American students decreasing, they still make up predominately the population of the student body. The population of the bourough may come into play as the largest ethnic group in Staten Island is White.i believe that further studies should be done taking in such factors.
+
+
+
+
 
 ::: {.callout-note title="AI Usage Statement" collapse="true"}
 
