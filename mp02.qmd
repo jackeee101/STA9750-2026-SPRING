@@ -1,0 +1,411 @@
+
+---
+title: "Mini-Project 02 - How Do You Do 'You Do You'?"
+author: "jackeee101"
+editor:
+    mode: source
+format:
+    html:
+        code-fold: true
+---
+
+```{r}
+library(tidyverse)
+library(glue)
+library(readxl)
+library(httr2)
+library(ggplot2)
+library(scales)
+library(gt)
+options(scipen = 999)
+```
+
+## Introduction
+
+A suitable introduction goes here. In this mini-project, I intend to demonstrate
+my skills at Combining Data/Data Visualization in an analysis of Survey Date/Social Sciences data.
+
+## Data Acquisition and Preparation
+
+```{r}
+load_atus_data <- function(file_base = c("resp", "rost", "act")){
+  if(!dir.exists(file.path("data", "mp02"))){
+    dir.create(file.path("data", "mp02"), showWarnings=FALSE, recursive=TRUE)
+  }
+  
+  file_base <- match.arg(file_base)
+  
+  file_name_out <- file.path("data", 
+                             "mp02", 
+                             glue("atus{file_base}_0324.dat"))
+  
+  if(!file.exists(file_name_out)){
+    
+    url_end <- glue("atus{file_base}-0324.zip")
+    
+    temp_zip <- tempfile(fileext=".zip")
+    temp_dir <- tools::file_path_sans_ext(temp_zip)
+    
+    request("https://www.bls.gov") |>
+      req_url_path("tus", "datafiles", url_end) |>
+      req_headers(`User-Agent` = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:143.0) Gecko/20100101 Firefox/143.0") |>
+      req_perform(temp_zip)
+    
+    unzip(temp_zip, exdir = temp_dir)
+    
+    temp_file <- file.path(temp_dir, basename(file_name_out))
+    
+    file.copy(temp_file, file_name_out)
+  }
+  
+  file <- read_csv(file_name_out, 
+                   show_col_types = FALSE)
+  
+  switch(file_base, 
+         resp=file |> 
+           mutate(survey_weight = TUFNWGTP, 
+                  time_alone = TRTALONE,
+                  marriage_status = case_match(TRSPPRES, 1 ~ "Spouse Present", 2 ~ "Unmarried Spouse Present", 3 ~ "None"),
+                  employment = case_match(TUABSOT, 1 ~ "Yes", 2 ~ "No", 3 ~ "Retired",4 ~ "Disabled",5 ~ "Unable"),
+                  school = case_match(TESCHLVL, 1 ~ "HS", 2 ~ "Uni"),
+                  income = TRERNWA,
+                  time_alone = TRTALONE,
+                  occupation = TRDTOCC1,
+                  month = TUMONTH,
+                  survey_year = TUYEAR,
+                  number_children = TRCHILDNUM),
+         
+         rost=file |>
+           mutate(sex = case_match(TESEX, 1 ~ "M", 2 ~ "F"),
+                  individual = TULINENO,
+                  age = TEAGE),
+         act =file |>
+           mutate(activity_n_of_day = TUACTIVITY_N, 
+                  time_spent_min = TUACTDUR24, 
+                  start_time = TUSTARTTIM,
+                  stop_time = TUSTOPTIME, 
+                  level1_code = paste0(TRTIER1P, "0000"), 
+                  level2_code = paste0(TRTIER2P, "00"),
+                  level3_code = TRCODEP,
+                  children = TR_03CC57,
+                  location = TEWHERE) 
+  ) |> 
+    rename(participant_id = TUCASEID) |>
+    select(matches("[:lower:]", 
+                   ignore.case=FALSE))
+}
+
+load_atus_activities <- function(){
+  if(!dir.exists(file.path("data", "mp02"))){
+    dir.create(file.path("data", "mp02"), showWarnings=FALSE, recursive=TRUE)
+  }
+  
+  dest_file <- file.path("data",
+                         "mp02",
+                         "atus_activity_codes.csv")
+  
+  if(!file.exists(dest_file)){
+    download.file("https://michael-weylandt.com/STA9750/mini/atus_activity_codes.csv", 
+                  quiet=TRUE, 
+                  destfile=dest_file, 
+                  mode="wb")
+  }
+  
+  read_csv(dest_file, show_col_types = FALSE) 
+}
+
+```
+
+Reorganizing data tables
+
+```{r}
+resp_data <- load_atus_data("resp")
+
+#resp_data = participant id, time alone, survey year, survey weight
+
+rost_data <- load_atus_data("rost")
+
+#rost_data = participant id, sex (household members)
+
+act_data <- load_atus_data("act")
+
+# act_Data = participant id, activity n of day, time spent, start time, stop time, 
+#level 1 code, level 2 code, level 3 code
+
+act_code <- load_atus_activities()
+
+#act_code = code level 1-3, task level 1-3
+
+#have three tables for each level of code
+
+codelevel1 <- act_code |>
+  select(code_level1, task_level1)
+
+codelevel1 <- codelevel1 |>
+  distinct(code_level1, .keep_all = TRUE)
+
+codelevel2 <- act_code |>
+  select(code_level2, task_level2)
+
+codelevel2 <- codelevel2 |>
+  distinct(code_level2, .keep_all = TRUE)
+
+codelevel3 <- act_code |>
+  select(code_level3, task_level3)
+
+codelevel3 <- codelevel3 |>
+  distinct(code_level3, .keep_all = TRUE)
+
+#join act_data with codes
+
+act_data_joined <- act_data |>
+  left_join(codelevel1, by = c("level1_code" = "code_level1")) |>
+  left_join(codelevel2, by = c("level2_code" = "code_level2")) |>
+  left_join(codelevel3, by = c("level3_code" = "code_level3"))
+
+full_data <- resp_data |>
+  full_join(act_data_joined, by = "participant_id")
+
+full_data <- full_data |>
+  mutate(participant_id = as.character(participant_id))
+
+rost_data <- rost_data |>
+  mutate(participant_id = as.character(participant_id))
+
+full_data_rost <- full_data |>
+  full_join(rost_data, by = "participant_id", relationship = "many-to-many")
+
+```
+
+## Exploratory Analysis
+
+# Task 2 
+  
+1 Many total hours were recorded on sleeping-type activities? 2241332 hours
+
+```{r}
+full_data |>
+  filter(str_detect(task_level2,"Sleep")) |>
+  summarise(sum_hour = sum(time_spent_min,na.rm = TRUE)/60) |>
+  gt() |>
+  cols_label(sum_hour = "Total Sleep Hours") |>
+  tab_header(title = "Sleep-Type Activities") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+2 How many female participants reported spending no time alone in 2003? 104 female participants
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,time_alone,sex) |>
+  filter(individual == 1,
+         time_alone == 0,
+         sex == "F") |>
+  distinct() |>
+  summarise(total_female = n()) |>
+  gt() |>
+    cols_label(total_female = "Number of Female Participants") |>
+    tab_header(title = "Female Participants Who Spent No Time Alone")|>
+    cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+
+```
+  
+# Task 3
+
+1 How many children under the age of 18 live in the respondent’s home? 215,155
+
+```{r}
+rost_data |>
+select(participant_id,age) |>
+filter (age <= 18)|>
+summarise(age = n()) |>
+gt() |>
+cols_label(age = "Number of Children") |>
+tab_header(title = "Children <18 Living in Respondent Home")|>
+cols_align(align = "center") |>
+fmt_number(decimals = 0)
+```
+
+2 Is the respondent married? 126,381 unmarried
+
+```{r}
+resp_data |>
+  select(participant_id,marriage_status) |>
+  mutate(participant_id = as.character(participant_id),
+         marriage_status = if_else(marriage_status == "Spouse Present", "Yes", "No")) |>
+  slice_head(n=10) |>
+  gt() |>
+  cols_label(participant_id = "Participant Id",
+             marriage_status = "Marriage Status") |>
+  tab_header(title = "Respondent Marriage Status")|>
+  cols_align(align = "left")
+```
+
+3 What is the respondent’s employment status (employed, unemployed, retired, etc.)?
+
+```{r}
+full_data |>
+  select(participant_id,employment) |>
+  filter(!is.na(employment)) |>
+  mutate(employment = case_when(employment == "Yes" ~ "Employed",
+                                  employment == "No"  ~ "Unemployed",
+                                  TRUE ~ employment)) |>
+  slice_head(n=10) |>
+  gt() |>
+  cols_label(participant_id = "Participant Id",
+             employment = "Employment Status") |>
+  tab_header(title = "Respondent Employment Status")|>
+  cols_align(align = "left")
+```
+
+4 Location of activity
+
+```{r}
+full_data |>
+  select(participant_id,task_level1, location) |>
+  filter(location > 0) |>
+  slice_head(n=10) |>
+  gt() |>
+  cols_label(participant_id = "Participant Id",
+             task_level1 = "Activity",
+             location = "Location") |>
+  tab_header(title = "Respondent Activity Location")|>
+  cols_align(align = "left")
+```
+
+5 Is the respondent enrolled in a college or university (not high school)?
+
+```{r}
+full_data |>
+  select(participant_id,school) |>
+  filter(!is.na(school)) |>
+  slice_head(n=10) |>
+  gt() |>
+  cols_label(participant_id = "Participant Id",
+             school = "School") |>
+  tab_header(title = "Respondent School")|>
+  cols_align(align = "left")
+
+```
+
+# Task 4 
+
+1 How many different respondents have answered an ATUS survey since 2003?
+
+```{r}
+full_data |>
+  distinct(participant_id) |>
+  summarize(total = n()) |>
+  gt() |>
+  cols_label(total = "Number of Respondents") |>
+  tab_header(title = "Number of Different Respondents") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+
+```
+
+2 Americans enjoy watching a variety of sports. How many different sports does ATUS ask about watching as a “Level 3” task?  
+
+```{r}
+full_data |>
+  select(task_level1,task_level3) |>
+  filter(str_detect(task_level1,"Sports") &
+           str_detect(task_level3, "Watch")) |>
+  distinct() |>
+  summarize(total = n()) |>
+  gt() |>
+  cols_label(total = "Number of Sports") |>
+  tab_header(title = "Different Sports ATUS Has For Watching") |>
+  cols_align(align = "center")
+
+```
+
+3 Approximately what percent of Americans are retired?  
+
+```{r}
+full_data |> 
+  select(survey_weight,employment) |>
+  distinct() |>
+  summarize(total = sum(survey_weight, na.rm = TRUE),
+              retired_population = sum(survey_weight[str_detect(employment, "Ret")],na.rm = TRUE)) |>
+  mutate(percentage = round((retired_population / total), 4),
+         percentage = paste0(percentage, "%")) |>
+  select(percentage) |>
+  gt() |>
+  cols_label(percentage = "Percentage of Retired Americans") |>
+  tab_header(title = "Percent of Americans That Are Retired") |>
+  cols_align(align = "center")|>
+  fmt_number(columns = percentage,
+             decimals = 0,
+             suffixing = " %" )
+
+```
+
+4 On average, how many hours do Americans sleep per night?
+
+```{r}
+full_data |>
+  select(time_spent_min,task_level3,survey_weight) |>
+  filter(str_detect(task_level3, "Sleep")) |>
+  summarize(avg_time_sleep = weighted.mean(time_spent_min, survey_weight)) |>
+  mutate(avg_time_sleep_hours = avg_time_sleep/60) |>
+  select (avg_time_sleep_hours) |>
+  gt() |>
+  cols_label(avg_time_sleep_hours = "Hours of Sleep") |>
+  tab_header(title = "Average Hours of Sleep Americans Get") |>
+  cols_align(align = "center") |>
+  fmt_number(columns = avg_time_sleep_hours,
+             decimals = 2)
+
+```
+
+5 On average, how many hours do Americans with one or more children in the home spend taking care of their children (all activities including healthcare and involvement in their children’s education)?
+
+
+```{r}
+full_data_rost |>
+  select(children,time_spent_min,task_level2,survey_weight,number_children,individual) |>
+  filter(number_children > 0,
+         str_detect(task_level2,"hildren"),
+         individual == 1) |>
+  summarize(avg_time_children = weighted.mean(time_spent_min, survey_weight[str_detect(task_level2,"hildren")],na.rm = TRUE)/60) |>
+  gt() |>
+  cols_label(avg_time_children = "Hours Spent With Children") |>
+  tab_header(title = "Average Hours of Time Americans Spend On Their Children") |>
+  cols_align(align = "center") |>
+  fmt_number(columns = avg_time_children,
+             decimals = 4)
+
+```
+
+# Task 5 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Final Insights and Deliverable
+
+Code related to the final deliverable of the assignment goes here. 
+
+
+
+------------------------------------------------------------------------
+
+This work ©2025 by jackeee101 was initially prepared as a Mini-Project for
+STA 9750 at Baruch College. More details about this course can be found at
+[the course site](https://michael-weylandt.com/STA9750) and instructions for
+this assignment can be found at 
+[MP #02](https://michael-weylandt.com/STA9750/mini/mini02.html)
