@@ -3,10 +3,16 @@
 title: "Mini-Project 02 - How Do You Do 'You Do You'?"
 author: "jackeee101"
 editor:
-    mode: source
+  mode: source
 format:
-    html:
-        code-fold: true
+  html:
+    code-fold: true
+    toc: true
+    toc-depth: 3
+    toc-location: left
+execute:
+  warning: false
+  message: false
 ---
 
 ```{r}
@@ -20,12 +26,11 @@ library(gt)
 options(scipen = 999)
 ```
 
-## Introduction
+### Introduction
 
-A suitable introduction goes here. In this mini-project, I intend to demonstrate
-my skills at Combining Data/Data Visualization in an analysis of Survey Date/Social Sciences data.
+In this project, I intend to utilize the data from ATUS to examine how Americans use their time. I will first answer the exploratory questions to familiarize myself with the data source. Then I will select a demographic of interest to me to do market research on a new Time Tracking app I am hoping to launch.
 
-## Data Acquisition and Preparation
+### Data Acquisition and Preparation
 
 ```{r}
 load_atus_data <- function(file_base = c("resp", "rost", "act")){
@@ -88,7 +93,27 @@ load_atus_data <- function(file_base = c("resp", "rost", "act")){
                   level2_code = paste0(TRTIER2P, "00"),
                   level3_code = TRCODEP,
                   children = TR_03CC57,
-                  location = TEWHERE) 
+                  location = case_when(
+    TEWHERE == 1  ~ "Respondent's home",
+    TEWHERE == 2  ~ "Workplace",
+    TEWHERE == 3  ~ "Someone else's home",
+    TEWHERE == 4  ~ "Restaurant/bar",
+    TEWHERE == 5  ~ "Place of worship",
+    TEWHERE == 6  ~ "Grocery store",
+    TEWHERE == 7  ~ "Other store/mall",
+    TEWHERE == 8  ~ "School",
+    TEWHERE == 9  ~ "Outdoors away from home",
+    TEWHERE == 10 ~ "Library",
+    TEWHERE == 11 ~ "Car/vehicle",
+    TEWHERE == 12 ~ "Other transportation",
+    TEWHERE == 13 ~ "Bank",
+    TEWHERE == 14 ~ "Gym/fitness center",
+    TEWHERE == 15 ~ "Hospital/medical",
+    TEWHERE == 16 ~ "Hotel/motel",
+    TEWHERE == 17 ~ "Other place",
+    TEWHERE == 18 ~ "Traveling",
+    TRUE ~ NA_character_
+  )) 
   ) |> 
     rename(participant_id = TUCASEID) |>
     select(matches("[:lower:]", 
@@ -115,6 +140,8 @@ load_atus_activities <- function(){
 }
 
 ```
+
+First, I load into the data and add additional data columns that upcoming exploratory questions will be asking for such as marriage status, time spent alone, employment, what school the respondents go to, income level, occupation, number of children, individual number and ect.
 
 Reorganizing data tables
 
@@ -177,11 +204,16 @@ full_data_rost <- full_data |>
 
 ```
 
-## Exploratory Analysis
+I load the data into different datasets and sliced up the activity code data into three datasets for easy joining. I then joined all the datasets excluding rost into full_data and a dataset including rost into full_data_rost. I mutated the participant id into a character format so I am able to see the entire id.
 
-# Task 2 
+
+### Exploratory Analysis
+
+### Task 2 
   
-1 Many total hours were recorded on sleeping-type activities? 2241332 hours
+1 Many total hours were recorded on sleeping-type activities? 
+
+2,241,332 hours
 
 ```{r}
 full_data |>
@@ -194,7 +226,9 @@ full_data |>
   fmt_number(decimals = 0)
 ```
 
-2 How many female participants reported spending no time alone in 2003? 104 female participants
+2 How many female participants reported spending no time alone in 2003?
+
+** 9,978 female participants **
 
 ```{r}
 full_data_rost |>
@@ -212,9 +246,11 @@ full_data_rost |>
 
 ```
   
-# Task 3
+### Task 3
 
-1 How many children under the age of 18 live in the respondent’s home? 215,155
+1 How many children under the age of 18 live in the respondent’s home?
+
+215,155 children under the age of 18 live in the respondent's home
 
 ```{r}
 rost_data |>
@@ -228,7 +264,9 @@ cols_align(align = "center") |>
 fmt_number(decimals = 0)
 ```
 
-2 Is the respondent married? 126,381 unmarried
+2 Is the respondent married? 
+
+With this code, you are able to see which respondents are married or not with their participant id
 
 ```{r}
 resp_data |>
@@ -243,7 +281,9 @@ resp_data |>
   cols_align(align = "left")
 ```
 
-3 What is the respondent’s employment status (employed, unemployed, retired, etc.)?
+3 What is the respondent’s employment status (employed, unemployed, retired, etc.)? 
+
+With this code, you will be able to see the respondent's employement status as long as you have their corresponding participant id
 
 ```{r}
 full_data |>
@@ -262,6 +302,8 @@ full_data |>
 
 4 Location of activity
 
+With this code, you are able to see where the activities take place at
+
 ```{r}
 full_data |>
   select(participant_id,task_level1, location) |>
@@ -277,6 +319,8 @@ full_data |>
 
 5 Is the respondent enrolled in a college or university (not high school)?
 
+With this code, you are able to see whether the respondent is enrolled in a college or university as long as you have their corresponding participant id
+
 ```{r}
 full_data |>
   select(participant_id,school) |>
@@ -290,9 +334,11 @@ full_data |>
 
 ```
 
-# Task 4 
+### Task 4 
 
 1 How many different respondents have answered an ATUS survey since 2003?
+
+252,808 different respondents have answered an ATUS survey since 2003
 
 ```{r}
 full_data |>
@@ -307,6 +353,8 @@ full_data |>
 ```
 
 2 Americans enjoy watching a variety of sports. How many different sports does ATUS ask about watching as a “Level 3” task?  
+
+ATUS has 30 different sports as a "Level 3" watching task
 
 ```{r}
 full_data |>
@@ -323,6 +371,8 @@ full_data |>
 ```
 
 3 Approximately what percent of Americans are retired?  
+
+Approximately .002% of Americans are retired
 
 ```{r}
 full_data |> 
@@ -345,6 +395,8 @@ full_data |>
 
 4 On average, how many hours do Americans sleep per night?
 
+Americans get on average, 4.04 hours of sleep per night
+
 ```{r}
 full_data |>
   select(time_spent_min,task_level3,survey_weight) |>
@@ -363,6 +415,7 @@ full_data |>
 
 5 On average, how many hours do Americans with one or more children in the home spend taking care of their children (all activities including healthcare and involvement in their children’s education)?
 
+Americans typically spend .5111 hours on their children
 
 ```{r}
 full_data_rost |>
@@ -380,27 +433,636 @@ full_data_rost |>
 
 ```
 
-# Task 5 
+### Task 5 
+
+ 1 Do retired persons spend more time on lawn-care than people who have full-time employment? 
+ 
+No
+
+```{r}
+full_data |>
+select(task_level3,employment,time_spent_min,survey_weight) |>
+filter(str_detect(task_level3,"lawn")) |>
+summarize(retired_lawn = sum(time_spent_min[str_detect(employment, "Ret")], na.rm = TRUE),
+          normal_lawn  = sum(time_spent_min[!str_detect(employment, "Ret")], na.rm = TRUE),
+          avg_retire = weighted.mean(time_spent_min[str_detect(employment, "Ret")],survey_weight[str_detect(employment, "Ret")],na.rm = TRUE),
+          avg_normal = weighted.mean(time_spent_min[!str_detect(employment, "Ret")],survey_weight[!str_detect(employment, "Ret")], na.rm = TRUE)) |>
+  gt() |>
+  cols_label(retired_lawn = "Time Spent By Retirees",
+             normal_lawn = "Time Spent By Non-Retirees",
+             avg_retire = "Average Time Spent By Retirees",
+             avg_normal = "Average Time Spent By Non-Retirees") |>
+  tab_header(title = "Time Spent On Lawn-Care By Retirees vs Non-Retirees") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0) 
+```
+
+2 How does the amount of time spent on social and recreational activities typically compare for married and unmarried people?
+
+Time spent on social and recrerational activities are typically higher for unmarried people
+
+```{r}
+
+full_data |>
+  select(task_level1,marriage_status,time_spent_min,survey_weight) |>
+  filter(str_detect(task_level1,"Social|Recreat")) |>
+         summarize(unmarried_time = sum(time_spent_min[marriage_status != "Spouse Present"],na.rm = TRUE),
+                   married_time = sum(time_spent_min[marriage_status == "Spouse Present"],na.rm = TRUE),
+                   avg_unmarried = weighted.mean(time_spent_min[marriage_status != "Spouse Present"],survey_weight[marriage_status != "Spouse Present"],na.rm = TRUE),
+                   avg_married = weighted.mean(time_spent_min[marriage_status == "Spouse Present"],survey_weight[marriage_status == "Spouse Present"],na.rm = TRUE)) |>
+  gt() |>
+  cols_label(unmarried_time = "Time Spent By Unmarried People",
+             married_time = "Time Spent By Married People",
+             avg_unmarried = "Average Time Spent By Unmarried People",
+             avg_married = "Average Time Spent By Married People") |>
+  tab_header(title = "Time Spent On Social/Recreational Activities By Married People vs Unmarried People") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)     
+
+```
 
 
+3 Where do high-earning Americans spend the majority of their time?
+
+Most high earning Americans typically spend their time at home, their workplace, in a vehicle, and someone else's home
+
+```{r}
+full_data |>
+  select(time_spent_min,survey_weight,location,income) |>
+  filter(income > 2000,
+         location > 0) |>
+  group_by(location) |>
+  summarize(total_time_spent = sum(time_spent_min,na.rm = TRUE)) |>
+  slice_max(total_time_spent, n=10) |>
+  gt() |>
+  cols_label(location = "Location",
+             total_time_spent = "Time Spent") |>
+  tab_header(title = "Where High-Earning Americans Spend Their Time") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0) 
+
+```
 
 
+4 What are the most common activities reported by Americans when on a bus, train, subway, boat, or ferry?
+
+Most common activities are travelling related to working
+
+```{r}
+full_data |>
+  select(location, time_spent_min,task_level3) |>
+  group_by(task_level3) |>
+  filter(location %in% c(15, 16, 18) &
+         !is.na(task_level3)) |>
+  summarize(total_time_spent = sum(time_spent_min,na.rm = TRUE)) |>
+  slice_max(total_time_spent,n=10) |>
+  gt() |>
+  cols_label(task_level3 = "Activity",
+             total_time_spent = "Time Spent") |>
+  tab_header(title = "What Activities Are Common When On A Bus/Subway/Boat/Ferry") |>
+  cols_align(align = "left") |>
+  fmt_number(decimals = 0) 
+
+```
 
 
+5 How much time per day do Americans spend on your four favorite activities and how does this vary by age group?
+
+For my favorite activites, I chose Eating and drinking, Playing games, Arts and crafts as a hobby,Grocery shopping, and below are the time spent varyng by age group
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,age,task_level3,time_spent_min) |>
+  filter(task_level3 %in% c("Eating and drinking", "Playing games", "Arts and crafts as a hobby","Grocery shopping"),
+         individual == 1) |>
+  mutate(
+    age_group = cut(
+      age,
+      breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 100),
+      labels = c("0-10","11-20","21-30","31-40","41-50","51-60","61-70","71-80","81+"),
+      right = TRUE))|>
+  group_by(age_group) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+gt() |>
+  cols_label(age_group = "Age Group",
+             total_time = "Time Spent") |>
+  tab_header(title = "Time Spent on Four Activities Vary By Age Group") |>
+  cols_align(align = "left") |>
+  fmt_number(decimals = 0)
+
+```
 
 
+### Task 6
+
+1 How does the amount of time spent on household activities change as Americans age?
+
+From the chart, it is apparent that the time Americans spend on household activities steeply go up around the age 20. This trend persists until around 40 where it starts to taper downwards. This decline slows to a consistent level around ages 50-65 until it starts to decline again.
+
+```{r}
+q1 <- full_data_rost |>
+  select( age,individual,task_level1,time_spent_min) |>
+  filter(individual == 1,
+         str_detect(task_level1, "Household")) |>
+  group_by(age) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE))
+
+ggplot(q1, aes(x=age, y=total_time)) + geom_point() +
+  labs(
+    title = "Time Spent On Household Activities Based On Age",
+    x = "Age",
+    y = "Total Time (minutes)"
+  )  
+
+```
 
 
+2 A major perk of working in education is the freedom to spend summers how you wish. What are the most popular activities for Americans employed in education during the summer months (June, July, and August)?
+
+From the bar chart, it is apparent that most people who work in education like to sleep during the summer. Another popular activity is working, either at their main job or another gig they picked up.
 
 
+```{r}
+q2 <- full_data |>
+  select(occupation,month,task_level3,time_spent_min) |>
+  filter(occupation == 8,
+         month %in% c(6,7,8),
+         !is.na(task_level3)) |>
+  group_by(task_level3) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time, n=10)
+
+ggplot(q2, aes(x = reorder(task_level3, total_time), y=total_time)) + geom_col()+ coord_flip() +
+labs(
+    title = "Popular Summer Activities For People Working In Education",
+    x = "Activity",
+    y = "Total Time (minutes)"
+  )
 
 
+```
 
-## Final Insights and Deliverable
+
+3 It is often remarked that “education is a privilege wasted on the young”. Among respondents who report being enrolled in a higher-education program, how does the amount of time allocated to various educational activities (attending class, doing homework, studying, etc.) vary by age? Does it seem to be true that older students dedicate more time to their education?
+
+From the chart it seems like younger students spend more time on their educational activities, most likely because they can afford to do so.
+
+```{r}
+q3 <- full_data_rost |>
+  select( age,individual,task_level1,time_spent_min) |>
+  filter(individual == 1,
+         str_detect(task_level1, "Education")) |>
+  group_by(age) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE))
+
+ggplot(q3, aes(x=age, y=total_time)) + geom_point() +
+labs(
+    title = "Time Spent On Educational Activities",
+    x = "Age",
+    y = "Total Time (minutes)"
+  )   
+
+```
+
+
+4 A “bump plot” is an effective way to display ranking (ordinal) data and to show how it changes over time. Use a bump plot to show how the relative interest in different sports changes as a function of either age or income (your choice).
+
+The "bump plot" shows that the 3rd, 4th, 5th and 6th ranking of who has the most interest in sports switches between ages 11-20,21-30,61-70, and 51-60 through the years. But age 31-40 and 41-50 is constistently in the 1st and 2nd place.
+
+
+```{r}
+q4 <- full_data_rost |>
+  select(age,individual,task_level1,time_spent_min,month) |>
+  filter(individual == 1,
+         str_detect(task_level1, "Sport")) |>
+  mutate(age_group = cut(
+      age,
+      breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 100),
+      labels = c("0-10","11-20","21-30","31-40","41-50","51-60","61-70","71-80","81+"),
+      right = TRUE))|>
+  group_by(month,age_group) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE), .groups = "drop") |>
+  group_by(month) |>
+  mutate(rank = rank(-total_time))
+  
+ggplot(q4, aes(x = month, y = rank, color = age_group, group = age_group)) + 
+geom_line() + 
+geom_point() + 
+scale_y_reverse() + 
+scale_x_continuous(breaks = 1:12) +
+labs(
+    title = "Ranking In Interest In Sport By Age Group",
+    x = "Month",
+    y = "Rank"
+  )
+
+```
+
+
+5 “Middle-child syndrome” can be explained, at least in part, by the idea that parents have less time to spend per child when they have multiple children. How does the amount of time parents spend per child change as family size increases?
+
+The line chart shows that the most time is spent on kids when there are two kids. This amount tapers off after which means that the "Middle-child syndrome" is most likely true.
+
+```{r}
+q5 <- full_data |>
+  select(number_children,time_spent_min,task_level2) |>
+  filter(str_detect(task_level2,"hildren")) |>
+  group_by (number_children) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) 
+
+ggplot(q5, aes(x=number_children, y=total_time)) + geom_point() + 
+geom_line() +
+labs(
+    title = "Time Spent on Children Related Activities As Number of Children Increases",
+    x = "Number of Children",
+    y = "Total Time (minutes)"
+  )
+
+
+```
+
+
+### Final Insights and Deliverable
 
 Code related to the final deliverable of the assignment goes here. 
 
+What activities/location they spend the most time.
 
+Stay at home dads:
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,employment,number_children,task_level3,time_spent_min,location,sex) |>
+  filter(employment == "No",
+         number_children > 0,
+         individual == 1,
+         sex == "M",
+         !is.na(task_level3)) |>
+  group_by(task_level3) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=10) |>
+  gt() |>
+  cols_label(task_level3 = "Activity",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular Stay At Home Dad Activities")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+
+full_data_rost |>
+  select(participant_id,individual,employment,number_children,task_level3,time_spent_min,location,sex) |>
+  filter(employment == "No",
+         number_children > 0,
+         individual == 1,
+         sex == "M",
+         location > 0) |>
+  group_by(location) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=5) |>
+  gt() |>
+  cols_label(location = "Location",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular Stay At Home Dad Locations")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+Undergraduate students:
+
+```{r}
+full_data|>
+  select(participant_id,task_level3,time_spent_min,location,school) |>
+  filter(school == "Uni",
+         !is.na(task_level3)) |>
+  group_by(task_level3) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=10) |>
+  gt() |>
+  cols_label(task_level3 = "Activity",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular Undergraduate Student Activities")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+
+full_data|>
+  select(participant_id,task_level3,time_spent_min,location,school) |>
+  filter(school == "Uni",
+         !is.na(task_level3),
+         location > 0) |>
+  group_by(location) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=5) |>
+  gt() |>
+  cols_label(location = "Location",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular Undergraduate Student Locations")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+High Income, No Kids (HINK) People from 26-34:
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,number_children,task_level3,time_spent_min,location,income,age) |>
+  filter(income > 2000,
+         number_children == 0,
+         individual == 1,
+         age > 26,
+         age < 34,
+         !is.na(task_level3)) |>
+  group_by(task_level3) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=10) |>
+  gt() |>
+  cols_label(task_level3 = "Activity",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular High Income No Kids (HINK) People's Activities")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+
+full_data_rost |>
+  select(participant_id,individual,number_children,task_level3,time_spent_min,location,income,age) |>
+  filter(income > 2000,
+         number_children == 0,
+         individual == 1,
+         age > 26,
+         age < 34,
+         location > 0) |>
+  group_by(location) |>
+  summarize(total_time = sum(time_spent_min, na.rm = TRUE)) |>
+  slice_max(total_time,n=5) |>
+  gt() |>
+  cols_label(location = "Location",
+             total_time = "Total Time Spent (Minutes)") |>
+  tab_header(title = "Most Popular High Income No Kids (HINK) People's Locations")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+Average Time Spent on Sleeping, Personal Care, Exercise
+
+Stay at home dads:
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,employment,number_children,task_level2,time_spent_min,sex,survey_weight) |>
+  filter(employment == "No",
+         number_children > 0,
+         individual == 1,
+         sex == "M",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+      str_detect(task_level2, "Sleep") ~ "Sleep",
+      str_detect(task_level2, "Exercise") ~ "Exercise",
+      str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE)) |>
+  gt() |>
+  cols_label(activity_group = "Activity",
+             avg_time = "Average Time Spent") |>
+  tab_header(title = "Average Time Spent on Activities (Stay At Home Dads)") |>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+  
+Undergraduate Students:
+
+```{r}
+
+full_data |>
+  select(participant_id,task_level2,time_spent_min,school,survey_weight) |>
+  filter(school == "Uni",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE))|>
+  gt() |>
+  cols_label(activity_group = "Activity",
+             avg_time = "Average Time Spent") |>
+  tab_header(title = "Average Time Spent on Activities (Undergraduate Students)")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+High Income, No Kids (HINK) People from 26-34:
+
+```{r}
+full_data_rost |>
+  select(participant_id,task_level2,time_spent_min,income,number_children,age,individual,survey_weight) |>
+  filter(income > 2000,
+         number_children == 0,
+         individual == 1,
+         age > 26,
+         age < 34,
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE))|>
+  gt() |>
+  cols_label(activity_group = "Activity",
+             avg_time = "Average Time Spent") |>
+  tab_header(title = "Average Time Spent on Activities (HINKS)")|>
+  cols_align(align = "center") |>
+  fmt_number(decimals = 0)
+```
+
+### Op-Ed
+
+In order to research the typical time use of the target demographics for the new time-tracking app, I utilized various sets of data from ATUS in the range 2003-2024. The target of the app are people wanting to better themselves. They want to track their every day activities and compare them against their peers. As such, the target demographics are “Stay at home” dads, college undergraduates, and late twenties to early thirties (26-34) individuals with high income and no kids to care for. I will be identifying parameters such as what activities they spent the most time on and what locations they are usually at. I will be disregarding the obvious activities and locations such as sleeping, eating and respondent's home unless it is relevant. I will also be identifying parameters for activities people utilizing this app will want to track, such as sleep, personal care time and time spent exercising. 
+
+The first set of target demographics are “Stay at home” dads. I define "Stay at home" dads as male respondents with more than 0 kids and is unemployed. The most popular activities (besides sleeping and eating) for "Stay at home" dads are watching television, taking classes for degrees, and playing games. The most population locations (other than the respondent's home) is school, someone else's home and in a vehicle. This shows that most "Stay at home" dads invest a substantial amount of time trying to better themselves through obtaining skills and certifications. This shows that they would be interested in the app as it could help them with time management, between taking classes, time on hobbies, and ect. 
+
+The second set of target demographics are undergraduate students. I define undergraduate students as respondents still in Uni. The most popular activities (besides sleeping and eating) are working, watching television, research, and homework. The third most popular activity is "Research or homework for class (for degree, certification, or licensure)" meaning that undergraduate students are another set of demographic that majority work towards bettering themselves. The most popular locations for students (other than the respondent's home) is the workplace, someone else's home and school. For students, time management is imperative and for those with challenging courses, many seek out studying apps that track their time studying. Apps that limits the access of other apps to enhance studying efficiency is also very popular. As such, I believe that a time tracking app that allows them to track the time they spend on hobbies and work hours would be useful. I believe that if we can also incorporate a function where it limits other app usuages, it would be not only popular amount undergraduate students, but stay at home dads as well.
+
+The third set of target demographics that I chose are individuals with high income and no kids. The most popular activities (besides sleeping and eating) is work, watching television, and socializing. The most popular locations for these individuals (besides their home) is their workplace, someone else's home and other transportation. Although they do not have school or studying for a certificate among their popular activities, I believe that this demographic of individuals would also find a time tracking app useful. As our time tracking app is not only for studying but time management. Since they do not have children, compared to their peers with kids, they have more freedom with their time. They are able to track their sleep, personal care, and time spent exercising to better their health.
+
+
+With the chart below, I calculated the target level for time spent on activities for the three demographics. I think that a good goal for users would be to meet the average time spent on these activities. if they wish to up the activity or allocate time differently, they could do so, but these will be the default settings. I also calculated the different ranges for the different activities varying by the demographic groups. I think that incorporating this and by displaying a "You did this activity more than % other people" would be motivating for the user.
+
+
+
+```{r}
+dad_time <- full_data_rost |>
+  select(participant_id,individual,employment,number_children,task_level2,time_spent_min,sex,survey_weight) |>
+  filter(employment == "No",
+         number_children > 0,
+         individual == 1,
+         sex == "M",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+      str_detect(task_level2, "Sleep") ~ "Sleep",
+      str_detect(task_level2, "Exercise") ~ "Exercise",
+      str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time_dad = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE))
+
+student_time <- full_data |>
+  select(participant_id,task_level2,time_spent_min,school,survey_weight) |>
+  filter(school == "Uni",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time_student = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE))
+
+hink_time <- full_data_rost |>
+  select(participant_id,task_level2,time_spent_min,income,number_children,age,individual,survey_weight) |>
+  filter(income > 2000,
+         number_children == 0,
+         individual == 1,
+         age > 26,
+         age < 34,
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+  summarize(avg_time_hink = weighted.mean(time_spent_min, survey_weight, na.rm = TRUE))
+
+combined_time <- dad_time |>
+  full_join(student_time, by = "activity_group") |>
+  full_join(hink_time, by = "activity_group")
+
+long_time <- combined_time |>
+  pivot_longer(
+    cols = c(avg_time_dad, avg_time_student, avg_time_hink),
+    names_to = "group",
+    values_to = "avg_time"
+  )
+
+long_time <- long_time %>%
+  mutate(group = recode(group,
+                        "avg_time_dad" = "Dad",
+                        "avg_time_student" = "Student",
+                        "avg_time_hink" = "High Income No Kids 26-34"))
+
+
+ggplot(long_time, aes(x = activity_group, y = avg_time, fill = group)) +
+  geom_col(position = "dodge") +
+   geom_text(
+    aes(label = round(avg_time, 1)),                  
+    position = position_dodge(width = 0.9),         
+    vjust = -0.3,                                     
+    size = 3                                           
+  ) +
+  labs(
+    title = "Average Time (Min) for Different Activity Groups Vary by Demographics",
+    x = "Activity Group",
+    y = "Average Time (minutes)",
+    fill = "Group"
+  )
+
+
+```
+
+```{r}
+full_data_rost |>
+  select(participant_id,individual,employment,number_children,task_level2,time_spent_min,sex,survey_weight) |>
+  filter(employment == "No",
+         number_children > 0,
+         individual == 1,
+         sex == "M",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+      str_detect(task_level2, "Sleep") ~ "Sleep",
+      str_detect(task_level2, "Exercise") ~ "Exercise",
+      str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+   summarise(
+    low = quantile(time_spent_min, 0.25, na.rm = TRUE),
+    medium = quantile(time_spent_min, 0.50, na.rm = TRUE),
+    high = quantile(time_spent_min, 0.75, na.rm = TRUE)
+  ) |>
+  gt() |>
+  cols_label(activity_group = "Activity Group",
+             low = "Low Range (Min)",
+             medium = "Medium Range (Min)",
+             high = "High Range (Min)") |>
+  tab_header(title = "Low, Medium, High Range For Time Spent (Stay At Home Dads)")|>
+  cols_align(align = "left") |>
+  fmt_number(decimals = 0)
+```
+
+
+```{r}
+full_data |>
+  select(participant_id,task_level2,time_spent_min,school,survey_weight) |>
+  filter(school == "Uni",
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+   summarise(
+    low = quantile(time_spent_min, 0.25, na.rm = TRUE),
+    medium = quantile(time_spent_min, 0.50, na.rm = TRUE),
+    high = quantile(time_spent_min, 0.75, na.rm = TRUE)
+  ) |>
+  gt() |>
+  cols_label(activity_group = "Activity Group",
+             low = "Low Range (Min)",
+             medium = "Medium Range (Min)",
+             high = "High Range (Min)") |>
+  tab_header(title = "Low, Medium, High Range For Time Spent (Undergraduate Students)")|>
+  cols_align(align = "left") |>
+  fmt_number(decimals = 0)
+```
+
+```{r}
+full_data_rost |>
+  select(participant_id,task_level2,time_spent_min,income,number_children,age,individual,survey_weight) |>
+  filter(income > 2000,
+         number_children == 0,
+         individual == 1,
+         age > 26,
+         age < 34,
+         !is.na(task_level2),
+         str_detect(task_level2, "Sleep|Exercise|Personal Care")) |>
+  mutate(activity_group = case_when(
+    str_detect(task_level2, "Sleep") ~ "Sleep",
+    str_detect(task_level2, "Exercise") ~ "Exercise",
+    str_detect(task_level2, "Personal Care") ~ "Personal Care")) |>
+  group_by(activity_group) |>
+   summarise(
+    low = quantile(time_spent_min, 0.25, na.rm = TRUE),
+    medium = quantile(time_spent_min, 0.50, na.rm = TRUE),
+    high = quantile(time_spent_min, 0.75, na.rm = TRUE)
+  ) |>
+  gt() |>
+  cols_label(activity_group = "Activity Group",
+             low = "Low Range (Min)",
+             medium = "Medium Range (Min)",
+             high = "High Range (Min)") |>
+  tab_header(title = "Low, Medium, High Range For Time Spent (High Income No Kids 26-34)")|>
+  cols_align(align = "left") |>
+  fmt_number(decimals = 0)
+```
+
+
+
+::: {.callout-note title="AI Usage Statement" collapse="true"}
+
+ChatGPT was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools. Additionally, ChatGPT was used to provide additional background information on the topic and to brainstorm ideas for the final open-ended prompt. 
+
+:::
 
 ------------------------------------------------------------------------
 
