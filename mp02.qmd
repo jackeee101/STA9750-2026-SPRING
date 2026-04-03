@@ -409,7 +409,7 @@ t5 <- full_data_rost |>
   filter(number_children > 0,
          str_detect(task_level2,"hildren"),
          individual == 1) |>
-  summarize(avg_time_children = weighted.mean(time_spent_min, survey_weight[str_detect(task_level2,"hildren")],na.rm = TRUE)/60) 
+  summarize(avg_time_children = weighted.mean(time_spent_min, survey_weight[str_detect(task_level2,"hildren")],na.rm = TRUE)/60) |>
 pull(avg_time_children)
 
 ```
