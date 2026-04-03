@@ -338,44 +338,38 @@ full_data |>
 
 1 How many different respondents have answered an ATUS survey since 2003?
 
-252,808 different respondents have answered an ATUS survey since 2003
-
 ```{r}
-full_data |>
+t1 <- full_data |>
   distinct(participant_id) |>
   summarize(total = n()) |>
-  gt() |>
-  cols_label(total = "Number of Respondents") |>
-  tab_header(title = "Number of Different Respondents") |>
-  cols_align(align = "center") |>
-  fmt_number(decimals = 0)
-
+  pull(total)
 ```
+
+`r t1` different respondents have answered an ATUS survey since 2003
+
+
 
 2 Americans enjoy watching a variety of sports. How many different sports does ATUS ask about watching as a “Level 3” task?  
 
-ATUS has 30 different sports as a "Level 3" watching task
 
 ```{r}
-full_data |>
+t2 <- full_data |>
   select(task_level1,task_level3) |>
   filter(str_detect(task_level1,"Sports") &
            str_detect(task_level3, "Watch")) |>
   distinct() |>
   summarize(total = n()) |>
-  gt() |>
-  cols_label(total = "Number of Sports") |>
-  tab_header(title = "Different Sports ATUS Has For Watching") |>
-  cols_align(align = "center")
+  pull(total)
 
 ```
+ATUS has `r t2` different sports as a "Level 3" watching task
+
+
 
 3 Approximately what percent of Americans are retired?  
 
-Approximately .002% of Americans are retired
-
 ```{r}
-full_data |> 
+t3 <- full_data |> 
   select(survey_weight,employment) |>
   distinct() |>
   summarize(total = sum(survey_weight, na.rm = TRUE),
@@ -383,55 +377,45 @@ full_data |>
   mutate(percentage = round((retired_population / total), 4),
          percentage = paste0(percentage, "%")) |>
   select(percentage) |>
-  gt() |>
-  cols_label(percentage = "Percentage of Retired Americans") |>
-  tab_header(title = "Percent of Americans That Are Retired") |>
-  cols_align(align = "center")|>
-  fmt_number(columns = percentage,
-             decimals = 0,
-             suffixing = " %" )
+  pull(percentage)
 
 ```
+Approximately `r t3` of Americans are retired
+
+
 
 4 On average, how many hours do Americans sleep per night?
 
-Americans get on average, 4.04 hours of sleep per night
 
 ```{r}
-full_data |>
+t4 <- full_data |>
   select(time_spent_min,task_level3,survey_weight) |>
   filter(str_detect(task_level3, "Sleep")) |>
   summarize(avg_time_sleep = weighted.mean(time_spent_min, survey_weight)) |>
   mutate(avg_time_sleep_hours = avg_time_sleep/60) |>
   select (avg_time_sleep_hours) |>
-  gt() |>
-  cols_label(avg_time_sleep_hours = "Hours of Sleep") |>
-  tab_header(title = "Average Hours of Sleep Americans Get") |>
-  cols_align(align = "center") |>
-  fmt_number(columns = avg_time_sleep_hours,
-             decimals = 2)
-
+  pull(avg_time_sleep_hours)
 ```
+Americans get on average, `r t4` hours of sleep per night
+
+
 
 5 On average, how many hours do Americans with one or more children in the home spend taking care of their children (all activities including healthcare and involvement in their children’s education)?
 
-Americans typically spend .5111 hours on their children
 
 ```{r}
-full_data_rost |>
+t5 <- full_data_rost |>
   select(children,time_spent_min,task_level2,survey_weight,number_children,individual) |>
   filter(number_children > 0,
          str_detect(task_level2,"hildren"),
          individual == 1) |>
-  summarize(avg_time_children = weighted.mean(time_spent_min, survey_weight[str_detect(task_level2,"hildren")],na.rm = TRUE)/60) |>
-  gt() |>
-  cols_label(avg_time_children = "Hours Spent With Children") |>
-  tab_header(title = "Average Hours of Time Americans Spend On Their Children") |>
-  cols_align(align = "center") |>
-  fmt_number(columns = avg_time_children,
-             decimals = 4)
+  summarize(avg_time_children = weighted.mean(time_spent_min, survey_weight[str_detect(task_level2,"hildren")],na.rm = TRUE)/60) 
+pull(avg_time_children)
 
 ```
+Americans typically spend `r t5` hours on their children
+
+
 
 ### Task 5 
 
