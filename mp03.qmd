@@ -859,8 +859,17 @@ apportionment_2030 |>
 
 ## Task 9: Developing an Advertising Strategy to Induce Internal Migration and Increase State Political Power
 
-Code related to the final deliverable of the assignment goes here. 
+As a policy analyst working for the governor of New York State, I was tasked with analyzing the sources of migration in order to find opportunities to encourage more people from either other states or other countries to migrate to New York. I will be approaching this topic by finding the major states and metro areas people usually migrate from to New York, and the areas people from New York tend to migrate to in order to try to reduce out-migration.
 
+The first step I took was to explore the major sources of migration into New York from other states and metro areas.  Individuals migrating to New York tend to come from New Jersey, California, Florida, and Pennsylvania. Upon taking a closer look, the metro areas they tend to come from include Philadelphia, Washington, D.C., Boston, Los Angeles, and other areas outside the U.S.
+
+The second step I took was to explore the major source of migration out of New York to other states and metro areas. Individuals migrating out of New York tend to go to Florida, New Jersey, Pennsylvania, California, and Texas. Whereas the metro areas they tend to go to include Philadelphia, Miami, Washington, D.C., Los Angeles, and Bridgeport. 
+
+From the data, it is clear that people who migrate out tend to come from the same areas that New Yorkers migrate to, and they exhibit the same characteristics. Most are major walkable cities that have a large, diverse population. Which means, in order to keep migration low and increase migration, we have to enhance the qualities that make New York enticing. I also suggest limiting the efforts to cities further away, as residents from Philadelphia and New Jersey will always traverse back and forth to New York and vice versa. So the cities best to advertise to would be Los Angeles and Miami.
+
+In order to increase the number of congressional seats, for my marketing campaign, I aim to increase migration by at least 600k - 1 million. My campaign consists of three parts: a hook to reel more people in, a reason to make them stay, and a reason to encourage them to retire here in New York in order to appeal to people of all ages. The younger crowd tends to migrate to the city, and the number of activities that take place increases when there is a large, congested population. However, a population with a skewed age distribution is not sustainable. 
+
+For the hook to reel more people in, I suggest investing in pop-up events in collaboration with creators and IPs (intellectual properties) that are popular. This will draw people from other states to visit the limited-time event and fall in love with the city while they are here. Activities are also a great way to build a community of like-minded people. Individuals who are in a community and have bonds that tether them to the state are less likely to move away. I think investing in safety and housing would also encourage people to stay and retire instead of moving away. If a more efficient transportation system connects the city with upstate New York, Staten Island, or Long Island. Those seeking a quiet retirement would have more reason to stay instead of moving to places like Tampa or Pennsylvania.
 
 
 ------------------------------------------------------------------------
