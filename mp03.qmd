@@ -52,8 +52,6 @@ acs_data <- map_dfr(years, function(y) {
     mutate(year = y)
 })
 
-glimpse(acs_data)
-
 population <- acs_data |>
   select(NAME,estimate,year)
 ```
@@ -819,7 +817,7 @@ head(pop_projection) |>
 
 ```
 
-### Task 7 Reapportionment
+### Task 8 Reapportionment
 
 1. Apply the Huntington-Hill method to your population forecasts in order to estimate the number of congressional districts your state will have as of the 2030 redistricting cycle.
 
@@ -871,7 +869,11 @@ In order to increase the number of congressional seats, for my marketing campaig
 
 For the hook to reel more people in, I suggest investing in pop-up events in collaboration with creators and IPs (intellectual properties) that are popular. This will draw people from other states to visit the limited-time event and fall in love with the city while they are here. Activities are also a great way to build a community of like-minded people. Individuals who are in a community and have bonds that tether them to the state are less likely to move away. I think investing in safety and housing would also encourage people to stay and retire instead of moving away. If a more efficient transportation system connects the city with upstate New York, Staten Island, or Long Island. Those seeking a quiet retirement would have more reason to stay instead of moving to places like Tampa or Pennsylvania.
 
+::: {.callout-note title="AI Usage Statement" collapse="true"}
 
+ChatGPT was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools. Additionally, ChatGPT was used to provide additional background information on the topic and to brainstorm ideas for the final open-ended prompt. 
+
+:::
 ------------------------------------------------------------------------
 
 This work ©2025 by jackeee101 was initially prepared as a Mini-Project for
