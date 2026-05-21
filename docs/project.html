@@ -543,7 +543,9 @@ $ Location                               &lt;chr&gt; "POINT (-73.828890858381 40
 <span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(all_years)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(all_years, <span class="st">"all_years.rds"</span>, <span class="at">compress =</span> <span class="st">"xz"</span>)</span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(all_years)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 12,017,632
@@ -601,8 +603,8 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-88d9379c317bb655ef47" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-88d9379c317bb655ef47">{"x":{"visdat":{"19103ef31a3d":["function () ","plotlyVisDat"]},"cur_data":"19103ef31a3d","attrs":{"19103ef31a3d":{"labels":{},"values":{},"marker":{"colors":["#F6D186","#F4A261","#E9C46A","#E76F51","#F2CC8F"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["MOBILE","ONLINE","OTHER","PHONE"],"values":[2777128,5595734,370,3644400],"marker":{"color":"rgba(31,119,180,1)","colors":["#F6D186","#F4A261","#E9C46A","#E76F51","#F2CC8F"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-893a757248e660c197a2" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-893a757248e660c197a2">{"x":{"visdat":{"63c4b464d40":["function () ","plotlyVisDat"]},"cur_data":"63c4b464d40","attrs":{"63c4b464d40":{"labels":{},"values":{},"marker":{"colors":["#F6D186","#F4A261","#E9C46A","#E76F51","#F2CC8F"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["MOBILE","ONLINE","OTHER","PHONE"],"values":[2777128,5595734,370,3644400],"marker":{"color":"rgba(31,119,180,1)","colors":["#F6D186","#F4A261","#E9C46A","#E76F51","#F2CC8F"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>I made a pie chart showcasing the proportion of each submission method to the overall count.</p>
@@ -632,23 +634,23 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">"center"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="izxrwvphdg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#izxrwvphdg table {
+<div id="jvsigabxcl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jvsigabxcl table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#izxrwvphdg thead, #izxrwvphdg tbody, #izxrwvphdg tfoot, #izxrwvphdg tr, #izxrwvphdg td, #izxrwvphdg th {
+#jvsigabxcl thead, #jvsigabxcl tbody, #jvsigabxcl tfoot, #jvsigabxcl tr, #jvsigabxcl td, #jvsigabxcl th {
   border-style: none;
 }
 
-#izxrwvphdg p {
+#jvsigabxcl p {
   margin: 0;
   padding: 0;
 }
 
-#izxrwvphdg .gt_table {
+#jvsigabxcl .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -674,12 +676,12 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-left-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_caption {
+#jvsigabxcl .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#izxrwvphdg .gt_title {
+#jvsigabxcl .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -691,7 +693,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-width: 0;
 }
 
-#izxrwvphdg .gt_subtitle {
+#jvsigabxcl .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -703,7 +705,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-width: 0;
 }
 
-#izxrwvphdg .gt_heading {
+#jvsigabxcl .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -715,13 +717,13 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_bottom_border {
+#jvsigabxcl .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_col_headings {
+#jvsigabxcl .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -736,7 +738,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_col_heading {
+#jvsigabxcl .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -756,7 +758,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#izxrwvphdg .gt_column_spanner_outer {
+#jvsigabxcl .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -768,15 +770,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 4px;
 }
 
-#izxrwvphdg .gt_column_spanner_outer:first-child {
+#jvsigabxcl .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#izxrwvphdg .gt_column_spanner_outer:last-child {
+#jvsigabxcl .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#izxrwvphdg .gt_column_spanner {
+#jvsigabxcl .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -788,11 +790,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   width: 100%;
 }
 
-#izxrwvphdg .gt_spanner_row {
+#jvsigabxcl .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#izxrwvphdg .gt_group_heading {
+#jvsigabxcl .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -818,7 +820,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   text-align: left;
 }
 
-#izxrwvphdg .gt_empty_group_heading {
+#jvsigabxcl .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -833,15 +835,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: middle;
 }
 
-#izxrwvphdg .gt_from_md > :first-child {
+#jvsigabxcl .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#izxrwvphdg .gt_from_md > :last-child {
+#jvsigabxcl .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#izxrwvphdg .gt_row {
+#jvsigabxcl .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -860,7 +862,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#izxrwvphdg .gt_stub {
+#jvsigabxcl .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -873,7 +875,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#izxrwvphdg .gt_stub_row_group {
+#jvsigabxcl .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -887,15 +889,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: top;
 }
 
-#izxrwvphdg .gt_row_group_first td {
+#jvsigabxcl .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#izxrwvphdg .gt_row_group_first th {
+#jvsigabxcl .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#izxrwvphdg .gt_summary_row {
+#jvsigabxcl .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -905,16 +907,16 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#izxrwvphdg .gt_first_summary_row {
+#jvsigabxcl .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_first_summary_row.thick {
+#jvsigabxcl .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#izxrwvphdg .gt_last_summary_row {
+#jvsigabxcl .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -924,7 +926,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_grand_summary_row {
+#jvsigabxcl .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -934,7 +936,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#izxrwvphdg .gt_first_grand_summary_row {
+#jvsigabxcl .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -944,7 +946,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_last_grand_summary_row_top {
+#jvsigabxcl .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -954,11 +956,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_striped {
+#jvsigabxcl .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#izxrwvphdg .gt_table_body {
+#jvsigabxcl .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -967,7 +969,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_footnotes {
+#jvsigabxcl .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -981,7 +983,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_footnote {
+#jvsigabxcl .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -990,7 +992,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#izxrwvphdg .gt_sourcenotes {
+#jvsigabxcl .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1004,7 +1006,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#izxrwvphdg .gt_sourcenote {
+#jvsigabxcl .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1012,72 +1014,72 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#izxrwvphdg .gt_left {
+#jvsigabxcl .gt_left {
   text-align: left;
 }
 
-#izxrwvphdg .gt_center {
+#jvsigabxcl .gt_center {
   text-align: center;
 }
 
-#izxrwvphdg .gt_right {
+#jvsigabxcl .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#izxrwvphdg .gt_font_normal {
+#jvsigabxcl .gt_font_normal {
   font-weight: normal;
 }
 
-#izxrwvphdg .gt_font_bold {
+#jvsigabxcl .gt_font_bold {
   font-weight: bold;
 }
 
-#izxrwvphdg .gt_font_italic {
+#jvsigabxcl .gt_font_italic {
   font-style: italic;
 }
 
-#izxrwvphdg .gt_super {
+#jvsigabxcl .gt_super {
   font-size: 65%;
 }
 
-#izxrwvphdg .gt_footnote_marks {
+#jvsigabxcl .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#izxrwvphdg .gt_asterisk {
+#jvsigabxcl .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#izxrwvphdg .gt_indent_1 {
+#jvsigabxcl .gt_indent_1 {
   text-indent: 5px;
 }
 
-#izxrwvphdg .gt_indent_2 {
+#jvsigabxcl .gt_indent_2 {
   text-indent: 10px;
 }
 
-#izxrwvphdg .gt_indent_3 {
+#jvsigabxcl .gt_indent_3 {
   text-indent: 15px;
 }
 
-#izxrwvphdg .gt_indent_4 {
+#jvsigabxcl .gt_indent_4 {
   text-indent: 20px;
 }
 
-#izxrwvphdg .gt_indent_5 {
+#jvsigabxcl .gt_indent_5 {
   text-indent: 25px;
 }
 
-#izxrwvphdg .katex-display {
+#jvsigabxcl .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#izxrwvphdg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#jvsigabxcl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1197,23 +1199,23 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">"center"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="ujtsdmghih" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ujtsdmghih table {
+<div id="evpyjuxulf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#evpyjuxulf table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ujtsdmghih thead, #ujtsdmghih tbody, #ujtsdmghih tfoot, #ujtsdmghih tr, #ujtsdmghih td, #ujtsdmghih th {
+#evpyjuxulf thead, #evpyjuxulf tbody, #evpyjuxulf tfoot, #evpyjuxulf tr, #evpyjuxulf td, #evpyjuxulf th {
   border-style: none;
 }
 
-#ujtsdmghih p {
+#evpyjuxulf p {
   margin: 0;
   padding: 0;
 }
 
-#ujtsdmghih .gt_table {
+#evpyjuxulf .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1239,12 +1241,12 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-left-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_caption {
+#evpyjuxulf .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ujtsdmghih .gt_title {
+#evpyjuxulf .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1256,7 +1258,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-width: 0;
 }
 
-#ujtsdmghih .gt_subtitle {
+#evpyjuxulf .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1268,7 +1270,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-width: 0;
 }
 
-#ujtsdmghih .gt_heading {
+#evpyjuxulf .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1280,13 +1282,13 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_bottom_border {
+#evpyjuxulf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_col_headings {
+#evpyjuxulf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1301,7 +1303,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_col_heading {
+#evpyjuxulf .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1321,7 +1323,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#ujtsdmghih .gt_column_spanner_outer {
+#evpyjuxulf .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1333,15 +1335,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 4px;
 }
 
-#ujtsdmghih .gt_column_spanner_outer:first-child {
+#evpyjuxulf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ujtsdmghih .gt_column_spanner_outer:last-child {
+#evpyjuxulf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ujtsdmghih .gt_column_spanner {
+#evpyjuxulf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1353,11 +1355,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   width: 100%;
 }
 
-#ujtsdmghih .gt_spanner_row {
+#evpyjuxulf .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ujtsdmghih .gt_group_heading {
+#evpyjuxulf .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1383,7 +1385,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   text-align: left;
 }
 
-#ujtsdmghih .gt_empty_group_heading {
+#evpyjuxulf .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1398,15 +1400,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: middle;
 }
 
-#ujtsdmghih .gt_from_md > :first-child {
+#evpyjuxulf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ujtsdmghih .gt_from_md > :last-child {
+#evpyjuxulf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ujtsdmghih .gt_row {
+#evpyjuxulf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1425,7 +1427,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#ujtsdmghih .gt_stub {
+#evpyjuxulf .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1438,7 +1440,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#ujtsdmghih .gt_stub_row_group {
+#evpyjuxulf .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1452,15 +1454,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: top;
 }
 
-#ujtsdmghih .gt_row_group_first td {
+#evpyjuxulf .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ujtsdmghih .gt_row_group_first th {
+#evpyjuxulf .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ujtsdmghih .gt_summary_row {
+#evpyjuxulf .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1470,16 +1472,16 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#ujtsdmghih .gt_first_summary_row {
+#evpyjuxulf .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_first_summary_row.thick {
+#evpyjuxulf .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ujtsdmghih .gt_last_summary_row {
+#evpyjuxulf .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1489,7 +1491,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_grand_summary_row {
+#evpyjuxulf .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1499,7 +1501,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#ujtsdmghih .gt_first_grand_summary_row {
+#evpyjuxulf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1509,7 +1511,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_last_grand_summary_row_top {
+#evpyjuxulf .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1519,11 +1521,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_striped {
+#evpyjuxulf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ujtsdmghih .gt_table_body {
+#evpyjuxulf .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1532,7 +1534,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_footnotes {
+#evpyjuxulf .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1546,7 +1548,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_footnote {
+#evpyjuxulf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1555,7 +1557,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#ujtsdmghih .gt_sourcenotes {
+#evpyjuxulf .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1569,7 +1571,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#ujtsdmghih .gt_sourcenote {
+#evpyjuxulf .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1577,72 +1579,72 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#ujtsdmghih .gt_left {
+#evpyjuxulf .gt_left {
   text-align: left;
 }
 
-#ujtsdmghih .gt_center {
+#evpyjuxulf .gt_center {
   text-align: center;
 }
 
-#ujtsdmghih .gt_right {
+#evpyjuxulf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ujtsdmghih .gt_font_normal {
+#evpyjuxulf .gt_font_normal {
   font-weight: normal;
 }
 
-#ujtsdmghih .gt_font_bold {
+#evpyjuxulf .gt_font_bold {
   font-weight: bold;
 }
 
-#ujtsdmghih .gt_font_italic {
+#evpyjuxulf .gt_font_italic {
   font-style: italic;
 }
 
-#ujtsdmghih .gt_super {
+#evpyjuxulf .gt_super {
   font-size: 65%;
 }
 
-#ujtsdmghih .gt_footnote_marks {
+#evpyjuxulf .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ujtsdmghih .gt_asterisk {
+#evpyjuxulf .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ujtsdmghih .gt_indent_1 {
+#evpyjuxulf .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ujtsdmghih .gt_indent_2 {
+#evpyjuxulf .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ujtsdmghih .gt_indent_3 {
+#evpyjuxulf .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ujtsdmghih .gt_indent_4 {
+#evpyjuxulf .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ujtsdmghih .gt_indent_5 {
+#evpyjuxulf .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ujtsdmghih .katex-display {
+#evpyjuxulf .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#ujtsdmghih div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#evpyjuxulf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1916,26 +1918,24 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Created Date</span><span class="st">`</span>,problem_clean,lat, lon,<span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,<span class="st">`</span><span class="at">Closed Date</span><span class="st">`</span>)</span>
 <span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>dups <span class="sc">|&gt;</span></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Created Date</span><span class="st">`</span>,<span class="st">`</span><span class="at">Closed Date</span><span class="st">`</span>, problem_clean,<span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>, lon, lat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 652,828 × 8
+<pre><code># A tibble: 296,456 × 5
 # Groups:   lat_r, lon_r, problem_clean, Created Date [296,456]
-   lat_r lon_r `Created Date` `Closed Date` problem_clean Open Data Channel Ty…¹
-   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;         &lt;chr&gt;         &lt;chr&gt;                 
- 1  40.7 -73.8 12/31/2022 06… 12/31/2022 0… Encampment    PHONE                 
- 2  40.7 -73.8 12/31/2022 06… 01/02/2023 0… Encampment    PHONE                 
- 3  40.6 -73.8 12/31/2022 03… 02/13/2023 1… Unsanitary C… PHONE                 
- 4  40.6 -73.8 12/31/2022 03… 02/13/2023 1… Unsanitary C… PHONE                 
- 5  40.6 -73.8 12/31/2022 02… 01/03/2023 0… Derelict Veh… PHONE                 
- 6  40.6 -73.8 12/31/2022 02… 01/03/2023 0… Derelict Veh… PHONE                 
- 7  40.6 -74.0 12/31/2022 02… 04/13/2023 1… Unsanitary C… PHONE                 
- 8  40.6 -74.0 12/31/2022 02… 04/13/2023 1… Unsanitary C… PHONE                 
- 9  40.6 -74.0 12/31/2022 01… 03/26/2023 0… Plumbing      PHONE                 
-10  40.6 -74.0 12/31/2022 01… 03/26/2023 0… Plumbing      PHONE                 
-# ℹ 652,818 more rows
-# ℹ abbreviated name: ¹​`Open Data Channel Type`
-# ℹ 2 more variables: lon &lt;dbl&gt;, lat &lt;dbl&gt;</code></pre>
+   lat_r lon_r problem_clean        `Created Date`             n
+   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                &lt;chr&gt;                  &lt;int&gt;
+ 1  40.5 -74.2 Safety               12/03/2024 03:53:33 PM     2
+ 2  40.5 -74.2 Unsanitary Condition 01/09/2022 11:00:47 PM     2
+ 3  40.5 -74.2 Plumbing             01/16/2025 04:12:43 PM     3
+ 4  40.5 -74.3 Noise                03/31/2022 08:26:00 PM     2
+ 5  40.5 -74.2 Door/Window          01/20/2024 02:43:17 PM     2
+ 6  40.5 -74.2 Water System         01/27/2025 11:11:00 AM     2
+ 7  40.5 -74.2 Safety               02/24/2023 09:33:02 AM     2
+ 8  40.5 -74.2 Plumbing             01/11/2023 09:28:39 AM     2
+ 9  40.5 -74.2 Plumbing             10/18/2024 01:22:40 PM     2
+10  40.5 -74.2 Paint/Plaster        12/29/2022 01:21:32 PM     3
+# ℹ 296,446 more rows</code></pre>
 </div>
 </div>
 <p>Top dup submission for phone</p>
@@ -1961,23 +1961,23 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(n, <span class="at">decimals =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="jkkdbdzygl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jkkdbdzygl table {
+<div id="xjmcygqied" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xjmcygqied table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jkkdbdzygl thead, #jkkdbdzygl tbody, #jkkdbdzygl tfoot, #jkkdbdzygl tr, #jkkdbdzygl td, #jkkdbdzygl th {
+#xjmcygqied thead, #xjmcygqied tbody, #xjmcygqied tfoot, #xjmcygqied tr, #xjmcygqied td, #xjmcygqied th {
   border-style: none;
 }
 
-#jkkdbdzygl p {
+#xjmcygqied p {
   margin: 0;
   padding: 0;
 }
 
-#jkkdbdzygl .gt_table {
+#xjmcygqied .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2003,12 +2003,12 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-left-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_caption {
+#xjmcygqied .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jkkdbdzygl .gt_title {
+#xjmcygqied .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2020,7 +2020,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-width: 0;
 }
 
-#jkkdbdzygl .gt_subtitle {
+#xjmcygqied .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2032,7 +2032,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-width: 0;
 }
 
-#jkkdbdzygl .gt_heading {
+#xjmcygqied .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2044,13 +2044,13 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_bottom_border {
+#xjmcygqied .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_col_headings {
+#xjmcygqied .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2065,7 +2065,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_col_heading {
+#xjmcygqied .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2085,7 +2085,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#jkkdbdzygl .gt_column_spanner_outer {
+#xjmcygqied .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2097,15 +2097,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 4px;
 }
 
-#jkkdbdzygl .gt_column_spanner_outer:first-child {
+#xjmcygqied .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jkkdbdzygl .gt_column_spanner_outer:last-child {
+#xjmcygqied .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jkkdbdzygl .gt_column_spanner {
+#xjmcygqied .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2117,11 +2117,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   width: 100%;
 }
 
-#jkkdbdzygl .gt_spanner_row {
+#xjmcygqied .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jkkdbdzygl .gt_group_heading {
+#xjmcygqied .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2147,7 +2147,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   text-align: left;
 }
 
-#jkkdbdzygl .gt_empty_group_heading {
+#xjmcygqied .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2162,15 +2162,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: middle;
 }
 
-#jkkdbdzygl .gt_from_md > :first-child {
+#xjmcygqied .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jkkdbdzygl .gt_from_md > :last-child {
+#xjmcygqied .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jkkdbdzygl .gt_row {
+#xjmcygqied .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2189,7 +2189,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   overflow-x: hidden;
 }
 
-#jkkdbdzygl .gt_stub {
+#xjmcygqied .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2202,7 +2202,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#jkkdbdzygl .gt_stub_row_group {
+#xjmcygqied .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2216,15 +2216,15 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   vertical-align: top;
 }
 
-#jkkdbdzygl .gt_row_group_first td {
+#xjmcygqied .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jkkdbdzygl .gt_row_group_first th {
+#xjmcygqied .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jkkdbdzygl .gt_summary_row {
+#xjmcygqied .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2234,16 +2234,16 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#jkkdbdzygl .gt_first_summary_row {
+#xjmcygqied .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_first_summary_row.thick {
+#xjmcygqied .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jkkdbdzygl .gt_last_summary_row {
+#xjmcygqied .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2253,7 +2253,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_grand_summary_row {
+#xjmcygqied .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2263,7 +2263,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#jkkdbdzygl .gt_first_grand_summary_row {
+#xjmcygqied .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2273,7 +2273,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-top-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_last_grand_summary_row_top {
+#xjmcygqied .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2283,11 +2283,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_striped {
+#xjmcygqied .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jkkdbdzygl .gt_table_body {
+#xjmcygqied .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2296,7 +2296,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-bottom-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_footnotes {
+#xjmcygqied .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: solid;
@@ -2310,7 +2310,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_footnote {
+#xjmcygqied .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2319,7 +2319,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#jkkdbdzygl .gt_sourcenotes {
+#xjmcygqied .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: solid;
@@ -2333,7 +2333,7 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   border-right-color: #D3D3D3;
 }
 
-#jkkdbdzygl .gt_sourcenote {
+#xjmcygqied .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2341,72 +2341,72 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
   padding-right: 5px;
 }
 
-#jkkdbdzygl .gt_left {
+#xjmcygqied .gt_left {
   text-align: left;
 }
 
-#jkkdbdzygl .gt_center {
+#xjmcygqied .gt_center {
   text-align: center;
 }
 
-#jkkdbdzygl .gt_right {
+#xjmcygqied .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jkkdbdzygl .gt_font_normal {
+#xjmcygqied .gt_font_normal {
   font-weight: normal;
 }
 
-#jkkdbdzygl .gt_font_bold {
+#xjmcygqied .gt_font_bold {
   font-weight: bold;
 }
 
-#jkkdbdzygl .gt_font_italic {
+#xjmcygqied .gt_font_italic {
   font-style: italic;
 }
 
-#jkkdbdzygl .gt_super {
+#xjmcygqied .gt_super {
   font-size: 65%;
 }
 
-#jkkdbdzygl .gt_footnote_marks {
+#xjmcygqied .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jkkdbdzygl .gt_asterisk {
+#xjmcygqied .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jkkdbdzygl .gt_indent_1 {
+#xjmcygqied .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jkkdbdzygl .gt_indent_2 {
+#xjmcygqied .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jkkdbdzygl .gt_indent_3 {
+#xjmcygqied .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jkkdbdzygl .gt_indent_4 {
+#xjmcygqied .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jkkdbdzygl .gt_indent_5 {
+#xjmcygqied .gt_indent_5 {
   text-indent: 25px;
 }
 
-#jkkdbdzygl .katex-display {
+#xjmcygqied .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#jkkdbdzygl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#xjmcygqied div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2467,87 +2467,11 @@ $ category                               &lt;chr&gt; "Transportation", "Transpor
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(avg_time <span class="sc">~</span> <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span> <span class="sc">+</span> Borough <span class="sc">+</span> category <span class="sc">+</span> Agency,</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> df_agg)</span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>                                          Estimate Std. Error     t value
-(Intercept)                           -1504.683744   429.2989 -3.50497912
-`Open Data Channel Type`ONLINE           53.300737   153.4101  0.34743948
-`Open Data Channel Type`OTHER           -50.833231   195.4823 -0.26004012
-`Open Data Channel Type`PHONE           -17.268451   152.8681 -0.11296308
-BoroughBROOKLYN                          53.561087   161.2994  0.33205999
-BoroughMANHATTAN                        -28.201032   161.7442 -0.17435578
-BoroughQUEENS                            74.545031   163.1648  0.45686964
-BoroughSTATEN ISLAND                     -4.449233   167.8040 -0.02651446
-BoroughUnspecified                     -324.092055   193.3302 -1.67636579
-categoryGovernment/Administrative      1750.173821   226.1719  7.73824576
-categoryHealth/Food                    1107.017290   246.7231  4.48688088
-categoryHousing/Construction            159.706657   269.2886  0.59306867
-categoryNoise                           331.802447   276.2344  1.20116245
-categoryOther                           170.219565   184.9600  0.92030466
-categoryPublic Safety/Quality of Life   221.581948   242.0984  0.91525592
-categorySanitation/Waste                293.501484   257.5835  1.13944227
-categoryTaxi/FHV                       2107.892568   439.2380  4.79897640
-categoryTransportation                  376.275920   223.4431  1.68398963
-categoryWater/Environmental            -271.836664   271.4349 -1.00148029
-AgencyDEP                              1339.862999   417.0726  3.21254132
-AgencyDFTA                             1364.686876   700.3951  1.94845301
-AgencyDHS                              1364.372085   505.7927  2.69749289
-AgencyDOB                              1842.140178   507.0411  3.63311785
-AgencyDOE                              1140.500905   507.0627  2.24923057
-AgencyDOHMH                            4391.842641   398.7890 11.01294752
-AgencyDOT                              1307.216628   383.0560  3.41259968
-AgencyDPR                              4375.864459   429.1611 10.19632237
-AgencyDSNY                             1255.188191   390.3876  3.21523612
-AgencyEDC                              4838.949903   596.6529  8.11015930
-AgencyHPD                              1497.479102   427.2230  3.50514620
-AgencyNYPD                             1170.806701   401.2003  2.91825946
-AgencyOOS                              1308.813864   580.9355  2.25294192
-AgencyOTI                              1423.679949   442.5756  3.21680629
-AgencyTLC                              1669.878106   488.0689  3.42139808
-                                          Pr(&gt;|t|)
-(Intercept)                           4.870658e-04
-`Open Data Channel Type`ONLINE        7.283703e-01
-`Open Data Channel Type`OTHER         7.949127e-01
-`Open Data Channel Type`PHONE         9.100937e-01
-BoroughBROOKLYN                       7.399478e-01
-BoroughMANHATTAN                      8.616385e-01
-BoroughQUEENS                         6.479128e-01
-BoroughSTATEN ISLAND                  9.788549e-01
-BoroughUnspecified                    9.413307e-02
-categoryGovernment/Administrative     3.719635e-14
-categoryHealth/Food                   8.505204e-06
-categoryHousing/Construction          5.533353e-01
-categoryNoise                         2.301126e-01
-categoryOther                         3.577448e-01
-categoryPublic Safety/Quality of Life 3.603866e-01
-categorySanitation/Waste              2.549259e-01
-categoryTaxi/FHV                      1.967663e-06
-categoryTransportation                9.264945e-02
-categoryWater/Environmental           3.169562e-01
-AgencyDEP                             1.378669e-03
-AgencyDFTA                            5.177790e-02
-AgencyDHS                             7.162157e-03
-AgencyDOB                             3.014324e-04
-AgencyDOE                             2.482179e-02
-AgencyDOHMH                           4.853194e-26
-AgencyDOT                             6.821802e-04
-AgencyDPR                             8.590254e-23
-AgencyDSNY                            1.365988e-03
-AgencyEDC                             2.411402e-15
-AgencyHPD                             4.867658e-04
-AgencyNYPD                            3.637887e-03
-AgencyOOS                             2.458550e-02
-AgencyOTI                             1.358649e-03
-AgencyTLC                             6.608547e-04</code></pre>
-</div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[<span class="sc">-</span><span class="dv">1</span>, ]  </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>coefs[<span class="fu">order</span>(<span class="fu">abs</span>(coefs[,<span class="dv">3</span>]), <span class="at">decreasing =</span> <span class="cn">TRUE</span>), ] <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> coefs[<span class="sc">-</span><span class="dv">1</span>, ]  </span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>coefs[<span class="fu">order</span>(<span class="fu">abs</span>(coefs[,<span class="dv">3</span>]), <span class="at">decreasing =</span> <span class="cn">TRUE</span>), ] <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                  Estimate Std. Error   t value     Pr(&gt;|t|)
@@ -2570,67 +2494,67 @@ AgencyDOT                         1307.217   383.0560  3.412600 6.821802e-04</co
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> plot_data,</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="sc">~</span>avg_time,</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"bar"</span>,</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">layout</span>(</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  p,</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Resolution Time by Channel (Filtered by Problem Type)"</span>,</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Submission Channel"</span>),</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Average Resolution Time (Hours)"</span>)</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> plot_data,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="sc">~</span>avg_time,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"bar"</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">layout</span>(</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  p,</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Resolution Time by Channel (Filtered by Problem Type)"</span>,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Submission Channel"</span>),</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"Average Resolution Time (Hours)"</span>)</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">titlePanel</span>(<span class="st">"311 Resolution Time Explorer"</span>),</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sidebarLayout</span>(</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarPanel</span>(</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">selectInput</span>(</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"problem"</span>,</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Select Problem Type:"</span>,</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">choices =</span> <span class="fu">unique</span>(all_years<span class="sc">$</span>problem_clean)</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mainPanel</span>(</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plotlyOutput</span>(<span class="st">"plot"</span>)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>plot <span class="ot">&lt;-</span> <span class="fu">renderPlotly</span>({</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>    filtered <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(problem_clean <span class="sc">==</span> input<span class="sc">$</span>problem) <span class="sc">|&gt;</span></span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">avg_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_ly</span>(</span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>      filtered,</span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="sc">~</span>avg_time,</span>
-<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"bar"</span>,</span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span></span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">titlePanel</span>(<span class="st">"311 Resolution Time Explorer"</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sidebarLayout</span>(</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarPanel</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">selectInput</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"problem"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Select Problem Type:"</span>,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">choices =</span> <span class="fu">unique</span>(all_years<span class="sc">$</span>problem_clean)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mainPanel</span>(</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plotlyOutput</span>(<span class="st">"plot"</span>)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>plot <span class="ot">&lt;-</span> <span class="fu">renderPlotly</span>({</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    filtered <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(problem_clean <span class="sc">==</span> input<span class="sc">$</span>problem) <span class="sc">|&gt;</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">avg_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot_ly</span>(</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>      filtered,</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="sc">~</span>avg_time,</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"bar"</span>,</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <p></p><div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div><p></p>
@@ -2639,23 +2563,23 @@ AgencyDOT                         1307.217   383.0560  3.412600 6.821802e-04</co
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>channel_problem_summary <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">100</span>)  </span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>channel_wide <span class="ot">&lt;-</span> channel_problem_summary <span class="sc">|&gt;</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>, median_time) <span class="sc">|&gt;</span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> median_time,</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="cn">NA</span>,</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_expand =</span> <span class="cn">TRUE</span></span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>channel_problem_summary <span class="ot">&lt;-</span> all_years <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_time =</span> <span class="fu">median</span>(Time_to_Resolve_Hours, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">100</span>)  </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>channel_wide <span class="ot">&lt;-</span> channel_problem_summary <span class="sc">|&gt;</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(problem_clean, <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>, median_time) <span class="sc">|&gt;</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> <span class="st">`</span><span class="at">Open Data Channel Type</span><span class="st">`</span>,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> median_time,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_expand =</span> <span class="cn">TRUE</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <video width="900" controls="">
