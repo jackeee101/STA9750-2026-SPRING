@@ -1,0 +1,10 @@
+name: shiny
+title:
+username: jackeee101
+account: jackeee101
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17396914
+bundleId: 12025339
+url: https://jackeee101.shinyapps.io/shiny/
+version: 1
